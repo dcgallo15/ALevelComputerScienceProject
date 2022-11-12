@@ -2,19 +2,25 @@ import pygame
 from screen import Screen
 from object import Object
 
+from level import testLevel
+
 
 def main() -> int:
+    global testLevel
     gameRunning: bool = True
 
     pygame.init()
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
-    # Temporary object to test the rendering system
-    tempObj = Object(20, 20, 10, 10, (255, 255, 255))
-    screen.attachObject(tempObj)
+    screen.parseLevel(testLevel)
 
     # This will loop will run throughout the playing of the level
     while gameRunning == True:
+        # Event handling loop
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  # For the quit button
+                gameRunning = False
+
         screen.render()
         screen.clear()
 
