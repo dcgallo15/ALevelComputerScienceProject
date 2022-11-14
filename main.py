@@ -1,6 +1,6 @@
 import pygame
 from screen import Screen
-from object import Object
+from object import Object, Player
 
 from level import testLevel
 

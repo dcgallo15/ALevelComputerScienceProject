@@ -1,3 +1,7 @@
+from vector import Vector
+from math import atan, sqrt, pi
+
+
 class Object():
     def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, collision: bool = False) -> None:
         # Variable Initialisation
@@ -26,6 +30,42 @@ class Object():
     def getCollision(self) -> bool:
         return self.__collision
 
+    def translate(self, vec: Vector) -> None:
+        self.__xPos += vec.getX()
+        self.__yPos += vec.getY()
+
     # If this object is printed (for testing)
     def __repr__(self) -> str:
         return ("OBJECT WIDTH: " + str(self.__w) + " OBJECT HEIGHT: " + str(self.__h))
+
+
+class Player(Object):
+    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, forces: list, collision: bool = False) -> None:
+        # Calls object's constructor
+        super().__init__(width, height, xPos, yPos, color, collision)
+        self.__forces = forces  # List of Vector objects
+
+    # This method will add another force to the end of the list
+    def addForce(self, force: Vector) -> None:
+        self.__forces.append(force)
+
+    # This method will remove the first occurence of the force in the forces list
+    def removeForce(self, force: Vector) -> None:
+        self.__forces.remove(force)
+
+    def getForces(self) -> list:
+        return self.__forces
+
+    def processForces(self) -> None:
+        totalX = 0
+        totalY = 0
+        for i in range(len(self.__forces)):
+            totalX += self.__forces[i].getX()
+            totalY += self.__forces[i].getY()
+        # NOTE: only did this because python is stupid and cannot overload constructors
+        mod: float = sqrt((totalX * totalX) + (totalY * totalY))
+        if totalX != 0:
+            direction: float = atan(totalY / totalX)
+        else:  # cannot divide by 0
+            direction: float = pi / 2  # vertical direction if 0 horizontal component
+        self.translate(Vector(mod, direction))
