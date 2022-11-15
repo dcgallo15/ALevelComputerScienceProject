@@ -56,14 +56,14 @@ class Player(Object):
     def getForces(self) -> list:
         return self.__forces
 
-    def processForces(self) -> None:
+    def processForces(self, deltaTime: int) -> None:
         totalX = 0
         totalY = 0
         for i in range(len(self.__forces)):
             totalX += self.__forces[i].getX()
             totalY += self.__forces[i].getY()
         # NOTE: only did this because python is stupid and cannot overload constructors
-        mod: float = sqrt((totalX * totalX) + (totalY * totalY))
+        mod: float = (sqrt((totalX * totalX) + (totalY * totalY))) * deltaTime
         if totalX != 0:
             direction: float = atan(totalY / totalX)
         else:  # cannot divide by 0
