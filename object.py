@@ -40,10 +40,10 @@ class Object():
 
 
 class Player(Object):
-    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, forces: list, collision: bool = False) -> None:
+    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, collision: bool = False) -> None:
         # Calls object's constructor
         super().__init__(width, height, xPos, yPos, color, collision)
-        self.__forces = forces  # List of Vector objects
+        self.__velocities = velocities  # List of Vector objects
 
     # This method will add another force to the end of the list
     def addForce(self, force: Vector) -> None:
@@ -56,12 +56,12 @@ class Player(Object):
     def getForces(self) -> list:
         return self.__forces
 
-    def processForces(self) -> None:
+    def resolveVelocities(self) -> None:
         totalX = 0
         totalY = 0
         for i in range(len(self.__forces)):
-            totalX += self.__forces[i].getX()
-            totalY += self.__forces[i].getY()
+            totalX += self.__velocities[i].getX()
+            totalY += self.__velocities[i].getY()
         # NOTE: only did this because python is stupid and cannot overload constructors
         mod: float = sqrt((totalX * totalX) + (totalY * totalY))
         if totalX != 0:
