@@ -46,13 +46,21 @@ class Screen():
             print("SCREEN CLASS: This character cannot be parsed for")
             return (-1, -1, -1)
 
-    def parseLevel(self, level: list):
+    # This takes a list of strings and then converts it into objects
+    # It doesn't generate an object when the colour of the square is
+    # the same as the background color of the screen
+    def parseLevel(self, level: list) -> None:
+        # Loops through each element of the string
+        # The through each chracter in each string
         for x in range(len(level[0])):
             for y in range(len(level)):
+                # This make it proportional to the screen size
                 objWidth = self.__w // len(level[0])
                 objHeight = self.__h // len(level)
                 color: tuple = self._mapColors(int(level[y][x]))
+                # Checks if the color is the same as the background color
                 if color != self.__backgroundColor:
+                    # Generates and object and the correct positions
                     self.__objects.append(
                         Object(objWidth, objHeight, x * objWidth,
                                y * objHeight, color, True))
