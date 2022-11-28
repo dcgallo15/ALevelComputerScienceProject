@@ -20,3 +20,6 @@ class Vector():
 
     def setDirection(self, direction: float) -> None:
         self.__direction = direction
+
+    def __repr__(self):
+        return str(self.__mod) + " * " + str(self.__direction)

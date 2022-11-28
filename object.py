@@ -1,5 +1,5 @@
 from vector import Vector
-from math import atan, sqrt, pi
+from math import atan, tan, sqrt, pi
 
 
 class Object():
@@ -34,7 +34,12 @@ class Object():
         self.__xPos += vec.getX()
         self.__yPos += vec.getY()
 
-    # If this object is printed (for testing)
+    # This method is for when the player is to be translated by an amount that is not in vector form
+    def translateCartesian(self, x, y) -> None:
+        self.__xPos += x
+        self.__yPos += y
+
+        # If this object is printed (for testing)
     def __repr__(self) -> str:
         return ("OBJECT WIDTH: " + str(self.__w) + " OBJECT HEIGHT: " + str(self.__h))
 
@@ -48,6 +53,7 @@ class Player(Object):
     # This method will add another velocity to the end of the list
     def addVelocity(self, vel: Vector) -> None:
         self.__velocities.append(vel)
+        print(self.__velocities)
 
     # This method will remove the first occurence of the velocity in the velocities list
     def removeVelocity(self, vel: Vector) -> None:
@@ -57,15 +63,9 @@ class Player(Object):
         return self.__velocities
 
     def resolveVelocities(self, deltaTime: int) -> None:
-        totalX = 0
-        totalY = 0
+        totalX: int = 0
+        totalY: int = 0
         for i in range(len(self.__velocities)):
             totalX += self.__velocities[i].getX()
             totalY += self.__velocities[i].getY()
-        # NOTE: only did this because python is stupid and cannot overload constructors
-        mod: float = (sqrt((totalX * totalX) + (totalY * totalY))) * deltaTime
-        if totalX != 0:
-            direction: float = atan(totalY / totalX)
-        else:  # cannot divide by 0
-            direction: float = pi / 2  # vertical direction if 0 horizontal component
-        self.translate(Vector(mod, direction))
+        self.translateCartesian(totalX, totalY)
