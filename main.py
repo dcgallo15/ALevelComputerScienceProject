@@ -17,7 +17,7 @@ def main() -> int:
     screen = Screen(640, 480)
     player = Player(40, 40, 10, 10, (255, 0, 255), [])
     screen.attachObject(player)
-    player.addForce(Vector(5, pi / 2))
+    player.addVelocity(Vector(5, pi / 2))
 
     clock = pygame.time.Clock()
 
@@ -33,7 +33,7 @@ def main() -> int:
         else:
             deltaTime: float = 0
 
-        player.processForces(deltaTime)
+        player.resolveVelocities(deltaTime)
         screen.render()
         screen.clear()
         clock.tick(60)

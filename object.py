@@ -45,21 +45,21 @@ class Player(Object):
         super().__init__(width, height, xPos, yPos, color, collision)
         self.__velocities = velocities  # List of Vector objects
 
-    # This method will add another force to the end of the list
-    def addForce(self, force: Vector) -> None:
-        self.__forces.append(force)
+    # This method will add another velocity to the end of the list
+    def addVelocity(self, vel: Vector) -> None:
+        self.__velocities.append(vel)
 
-    # This method will remove the first occurence of the force in the forces list
-    def removeForce(self, force: Vector) -> None:
-        self.__forces.remove(force)
+    # This method will remove the first occurence of the velocity in the velocities list
+    def removeVelocity(self, vel: Vector) -> None:
+        self.__velocities.remove(vel)
 
-    def getForces(self) -> list:
-        return self.__forces
+    def getVelocities(self) -> list:
+        return self.__velocities
 
     def resolveVelocities(self, deltaTime: int) -> None:
         totalX = 0
         totalY = 0
-        for i in range(len(self.__forces)):
+        for i in range(len(self.__velocities)):
             totalX += self.__velocities[i].getX()
             totalY += self.__velocities[i].getY()
         # NOTE: only did this because python is stupid and cannot overload constructors
