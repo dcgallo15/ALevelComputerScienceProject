@@ -5,7 +5,7 @@ from math import pi
 
 
 class Screen():
-    # Contructor:
+    # Constructor:
     def __init__(self, w: int, h: int, attachedObjects: list = []) -> None:
         # Member variable initialisation
         self.__w = w
@@ -72,6 +72,13 @@ class Screen():
                     self.__objects.append(
                         Object(objWidth, objHeight, x * objWidth,
                                y * objHeight, color, True))
+
+    def objectCollsion(self) -> None:
+        # NOTE: Player is object with index 0
+        player: Player = self.__objects[0]
+        for i in range(1, len(self.__objects)):
+            currentObj = self.__objects[i]
+            player.collides(currentObj)
 
     # This will clear the screen (by default to black)
     def clear(self) -> None:

@@ -27,7 +27,12 @@ def main() -> int:
     screen = Screen(640, 480)
     player = Player(40, 40, 10, 10, (255, 0, 255), [], playerSpeed, True)
     print(player.getCollision())
+    # NOTE: player must be first object attached to the screen
     screen.attachObject(player)
+    tempObject = Object(10, 10, 100, 100, (255, 0, 255), True)
+    screen.attachObject(tempObject)
+    tempObject2 = Object(150, 200, 300, 300, (255, 0, 255), True)
+    screen.attachObject(tempObject2)
     clock = pygame.time.Clock()
 
     # This will loop will run throughout the playing of the level
@@ -78,6 +83,7 @@ def main() -> int:
             player.addVelocity(playerRight)
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
+        screen.objectCollsion()
 
         if clock.get_fps() > 0:
             deltaTime: float = (clock.get_time()) / clock.get_fps()

@@ -39,7 +39,7 @@ class Object():
         self.__xPos += x
         self.__yPos += y
 
-        # If this object is printed (for testing)
+    # If this object is printed (for testing)
     def __repr__(self) -> str:
         return ("OBJECT WIDTH: " + str(self.__w) + " OBJECT HEIGHT: " + str(self.__h))
 
@@ -86,3 +86,15 @@ class Player(Object):
             self.addVelocity(Vector(self.__speed, 0))
         elif self.getXPos() + self.getWidth() >= width:
             self.addVelocity(Vector(self.__speed, pi))
+
+    def collides(self, object: Object) -> None:
+        for i in range(self.getHeight()):
+            if (self.getYPos() + i > object.getYPos() and self.getYPos() + i < object.getYPos() + object.getHeight()):
+                # Left side
+                if self.getXPos() < object.getXPos():
+                    if self.getXPos() + self.getWidth() >= object.getXPos() and self.getXPos() <= object.getXPos() + object.getWidth():
+                        self.addVelocity(Vector(1, pi))
+                # Right side
+                if self.getXPos() > object.getXPos():
+                    if self.getXPos() >= object.getXPos() and self.getXPos() <= object.getXPos() + object.getWidth():
+                        self.addVelocity(Vector(1, 0))
