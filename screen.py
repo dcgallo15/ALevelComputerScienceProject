@@ -1,5 +1,7 @@
 import pygame
-from object import Object
+from object import Object, Player
+from vector import Vector
+from math import pi
 
 
 class Screen():
@@ -12,6 +14,12 @@ class Screen():
         self.__backgroundColor = (0, 0, 0)
         # Initialises the pygame screen
         self.__screen = pygame.display.set_mode((w, h))
+
+    def getHeight(self) -> int:
+        return self.__h
+
+    def getWidth(self) -> int:
+        return self.__w
 
     def attachObject(self, newObject: Object) -> None:
         self.__objects.append(newObject)

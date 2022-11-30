@@ -3,7 +3,6 @@ from screen import Screen
 from object import Object, Player
 from vector import Vector
 from math import pi
-import time
 
 from level import testLevel
 
@@ -19,12 +18,15 @@ def main() -> int:
     playerUp = Vector(playerSpeed, 3 * pi / 2)
     playerDown = Vector(playerSpeed, pi / 2)
 
+    keysDown = []
+
     arrowKeys: bool = False
 
     pygame.init()
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
-    player = Player(40, 40, 10, 10, (255, 0, 255), [])
+    player = Player(40, 40, 10, 10, (255, 0, 255), [], playerSpeed, True)
+    print(player.getCollision())
     screen.attachObject(player)
     clock = pygame.time.Clock()
 
@@ -41,30 +43,41 @@ def main() -> int:
                 if event.type == pygame.KEYDOWN:
                     # Left
                     if event.key == pygame.K_a:
-                        player.addVelocity(playerLeft)
+                        keysDown.append("A")
                     # Right
                     elif event.key == pygame.K_d:
-                        player.addVelocity(playerRight)
+                        keysDown.append("D")
                     # Up
                     elif event.key == pygame.K_w:
-                        player.addVelocity(playerUp)
+                        keysDown.append("W")
                     # Down
                     elif event.key == pygame.K_s:
-                        player.addVelocity(playerDown)
+                        keysDown.append("S")
                 # Keyup
                 elif event.type == pygame.KEYUP:
                     # Left
                     if event.key == pygame.K_a:
-                        player.removeVelocity(playerLeft)
+                        keysDown.remove("A")
                     # Right
                     elif event.key == pygame.K_d:
-                        player.removeVelocity(playerRight)
+                        keysDown.remove("D")
                     # Up
                     elif event.key == pygame.K_w:
-                        player.removeVelocity(playerUp)
+                        keysDown.remove("W")
                     # Down
                     elif event.key == pygame.K_s:
-                        player.removeVelocity(playerDown)
+                        keysDown.remove("S")
+
+        if "W" in keysDown:
+            player.addVelocity(playerUp)
+        if "S" in keysDown:
+            player.addVelocity(playerDown)
+        if "A" in keysDown:
+            player.addVelocity(playerLeft)
+        if "D" in keysDown:
+            player.addVelocity(playerRight)
+
+        player.stopAtBounds(screen.getWidth(), screen.getHeight())
 
         if clock.get_fps() > 0:
             deltaTime: float = (clock.get_time()) / clock.get_fps()
@@ -72,6 +85,7 @@ def main() -> int:
             deltaTime: float = 0
 
         player.resolveVelocities(deltaTime)
+        player.resetVelocities()
         screen.render()
         screen.clear()
         clock.tick(60)
