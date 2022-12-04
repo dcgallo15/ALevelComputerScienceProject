@@ -73,12 +73,12 @@ class Screen():
                         Object(objWidth, objHeight, x * objWidth,
                                y * objHeight, color, True))
 
-    def objectCollsion(self) -> None:
+    def objectCollsion(self, deltaTime: float) -> None:
         # NOTE: Player is object with index 0
         player: Player = self.__objects[0]
         for i in range(1, len(self.__objects)):
             currentObj = self.__objects[i]
-            player.collides(currentObj)
+            player.collides(currentObj, deltaTime)
 
     # This will clear the screen (by default to black)
     def clear(self) -> None:

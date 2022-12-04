@@ -4,7 +4,7 @@ from object import Object, Player
 from vector import Vector
 from math import pi
 
-from level import testLevel
+from level import testLevel, level1
 
 
 def main() -> int:
@@ -15,7 +15,7 @@ def main() -> int:
     playerSpeed: int = 5
     playerLeft = Vector(playerSpeed, pi)
     playerRight = Vector(playerSpeed, 0)
-    playerUp = Vector(playerSpeed, 3 * pi / 2)
+    playerUp = Vector(playerSpeed * playerSpeed, 3 * pi / 2)
     playerDown = Vector(playerSpeed, pi / 2)
 
     keysDown = []
@@ -29,10 +29,7 @@ def main() -> int:
     print(player.getCollision())
     # NOTE: player must be first object attached to the screen
     screen.attachObject(player)
-    tempObject = Object(10, 10, 100, 100, (255, 0, 255), True)
-    screen.attachObject(tempObject)
-    tempObject2 = Object(150, 200, 300, 300, (255, 0, 255), True)
-    screen.attachObject(tempObject2)
+    screen.parseLevel(level1)
     clock = pygame.time.Clock()
 
     # This will loop will run throughout the playing of the level
@@ -83,13 +80,16 @@ def main() -> int:
             player.addVelocity(playerRight)
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
-        screen.objectCollsion()
 
         if clock.get_fps() > 0:
             deltaTime: float = (clock.get_time()) / clock.get_fps()
         else:
             deltaTime: float = 0
 
+        # print(player.isStoodOnGround(level1))
+        (player.isStoodOnGround(level1))
+        player.addVelocity(Vector(playerSpeed, pi / 2))  # Gravity
+        screen.objectCollsion(deltaTime)
         player.resolveVelocities(deltaTime)
         player.resetVelocities()
         screen.render()

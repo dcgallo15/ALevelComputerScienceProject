@@ -87,14 +87,43 @@ class Player(Object):
         elif self.getXPos() + self.getWidth() >= width:
             self.addVelocity(Vector(self.__speed, pi))
 
-    def collides(self, object: Object) -> None:
+    def collides(self, object: Object, deltaTime: float) -> None:
         for i in range(self.getHeight()):
             if (self.getYPos() + i > object.getYPos() and self.getYPos() + i < object.getYPos() + object.getHeight()):
                 # Left side
                 if self.getXPos() < object.getXPos():
                     if self.getXPos() + self.getWidth() >= object.getXPos() and self.getXPos() <= object.getXPos() + object.getWidth():
-                        self.addVelocity(Vector(1, pi))
+                        self.addVelocity(
+                            Vector(deltaTime * self.__speed * self.__speed, pi))
+                        break  # so the velocity is not applied multiple times
                 # Right side
                 if self.getXPos() > object.getXPos():
                     if self.getXPos() >= object.getXPos() and self.getXPos() <= object.getXPos() + object.getWidth():
-                        self.addVelocity(Vector(1, 0))
+                        self.addVelocity(
+                            Vector(deltaTime * self.__speed * self.__speed, 0))
+                        break
+        """
+        for i in range(self.getWidth()):
+            if(self.getXPos() + i > object.getXPos() and self.getXPos() + i < object.getXPos() + object.getWidth()):
+                # Top side
+                if self.getYPos() < object.getXPos():
+                    if self.getYPos() + self.getHeight() >= object.getYPos() and self.getYPos() <= object.getYPos() + object.getHeight():
+                        self.addVelocity(
+                            Vector(self.__speed * self.__speed * deltaTime, 3 * pi / 2))
+                        break
+        """
+
+    # Check the positions of the platforms placed in the level
+    def isStoodOnGround(self, level: list) -> bool:
+        # then compare these with player positions to see if the player
+        # is stood on them
+        for x in range(level[0]):
+            for y in range(level)
+            if level[y][x] != "0":
+                objXpos =
+                # print(self.getXPos() in range(
+                #    len(level[i]) * j, (len(level[i]) * (j+1))))
+                print((self.getYPos(), ":", len(level) - len(level) * i))
+                if self.getYPos() + self.getHeight() in range((len(level) * i), (len(level) * (i+1))):
+                    return True
+        return False
