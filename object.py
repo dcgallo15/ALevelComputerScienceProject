@@ -114,16 +114,17 @@ class Player(Object):
         """
 
     # Check the positions of the platforms placed in the level
-    def isStoodOnGround(self, level: list) -> bool:
+    def isStoodOnGround(self, level: list, width: int, height: int) -> bool:
         # then compare these with player positions to see if the player
         # is stood on them
-        for x in range(level[0]):
-            for y in range(level)
-            if level[y][x] != "0":
-                objXpos =
-                # print(self.getXPos() in range(
-                #    len(level[i]) * j, (len(level[i]) * (j+1))))
-                print((self.getYPos(), ":", len(level) - len(level) * i))
-                if self.getYPos() + self.getHeight() in range((len(level) * i), (len(level) * (i+1))):
-                    return True
+        for x in range(len(level[0])):
+            for y in range(len(level)):
+                if level[y][x] != "0":
+                    objXpos = (width // len(level[y])) * x
+                    objYpos = (height // len(level)) * y
+                    objWidth = (width // len(level[y]))
+                    for i in range(objWidth):
+                        if self.getYPos() + self.getHeight() == objYpos and self.getXPos() == objXpos + i:
+                            print("@")
+                            return True
         return False

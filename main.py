@@ -86,9 +86,9 @@ def main() -> int:
         else:
             deltaTime: float = 0
 
-        # print(player.isStoodOnGround(level1))
-        (player.isStoodOnGround(level1))
-        player.addVelocity(Vector(playerSpeed, pi / 2))  # Gravity
+        if (player.isStoodOnGround(
+                level1, screen.getWidth(), screen.getHeight())) == False:
+            player.addVelocity(Vector(playerSpeed, pi / 2))  # Gravity
         screen.objectCollsion(deltaTime)
         player.resolveVelocities(deltaTime)
         player.resetVelocities()
