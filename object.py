@@ -35,7 +35,7 @@ class Object():
         self.__yPos += vec.getY()
 
     # This method is for when the player is to be translated by an amount that is not in vector form
-    def translateCartesian(self, x, y) -> None:
+    def translateCartesian(self, x: int, y: int) -> None:
         self.__xPos += x
         self.__yPos += y
 
@@ -71,7 +71,8 @@ class Player(Object):
         for i in range(len(self.__velocities)):
             totalX += self.__velocities[i].getX()
             totalY += self.__velocities[i].getY()
-        self.translateCartesian(totalX, totalY)
+        self.translateCartesian(int(totalX * deltaTime),
+                                int(totalY * deltaTime))
 
     def getSpeed(self) -> int:
         return self.__speed
@@ -102,29 +103,20 @@ class Player(Object):
                         self.addVelocity(
                             Vector(deltaTime * self.__speed * self.__speed, 0))
                         break
-        """
-        for i in range(self.getWidth()):
-            if(self.getXPos() + i > object.getXPos() and self.getXPos() + i < object.getXPos() + object.getWidth()):
-                # Top side
-                if self.getYPos() < object.getXPos():
-                    if self.getYPos() + self.getHeight() >= object.getYPos() and self.getYPos() <= object.getYPos() + object.getHeight():
-                        self.addVelocity(
-                            Vector(self.__speed * self.__speed * deltaTime, 3 * pi / 2))
-                        break
-        """
 
     # Check the positions of the platforms placed in the level
     def isStoodOnGround(self, level: list, width: int, height: int) -> bool:
         # then compare these with player positions to see if the player
         # is stood on them
-        for x in range(len(level[0])):
-            for y in range(len(level)):
+        objWidth = (width / len(level[0]))
+        objHeight = (height / len(level))
+        for y in range(len(level)):
+            for x in range(len(level[0])):
                 if level[y][x] != "0":
-                    objXpos = (width // len(level[y])) * x
-                    objYpos = (height // len(level)) * y
-                    objWidth = (width // len(level[y]))
-                    for i in range(objWidth):
-                        if self.getYPos() + self.getHeight() == objYpos and self.getXPos() == objXpos + i:
-                            print("@")
-                            return True
+                    objXpos = (objWidth) * x
+                    objYpos = (objHeight) * y
+                    for i in range(self.getWidth()):
+                        for j in range(int(objHeight)):
+                            if self.getYPos() + self.getHeight() == objYpos + j and self.getXPos() + i == objXpos:
+                                return True
         return False
