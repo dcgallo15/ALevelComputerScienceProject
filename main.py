@@ -12,14 +12,17 @@ def main() -> int:
 
     # Main variables initialisation
     gameRunning: bool = True
-    keysDown = []
+    keysDown = []  # keeps track of the keys that are pressed down
+
+    # this will be used later and be controlled by the menu to ensure that
+    # either arrow keys or WASD keys can be used by the player
     arrowKeys: bool = False
 
     pygame.init()
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
     player = Player(40, 40, 10, 10, (255, 0, 255), [], 20, True)
-    # NOTE: player must be first object attached to the screen
+    # player must be first object attached to the screen
     screen.attachObject(player)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
@@ -34,6 +37,8 @@ def main() -> int:
             # Keyboard events:
             if arrowKeys == False:
                 # Keydown
+                # By appending and removing from a list this ensures that when keys are held down
+                # the correct velocities are properly applied
                 if event.type == pygame.KEYDOWN:
                     # Left
                     if event.key == pygame.K_a:
@@ -62,6 +67,7 @@ def main() -> int:
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
 
+        # Checks which keys are in the list and are held down
         if "W" in keysDown:
             if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == True:
                 player.addVelocity(
@@ -78,12 +84,13 @@ def main() -> int:
         if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
             player.addVelocity(Vector(player.getSpeed(), pi / 2))  # Gravity
 
-        if clock.get_fps() > 0:
+        if clock.get_fps() > 0:  # ensures that velocity is dependent on time
             deltaTime: float = (clock.get_time()) / clock.get_fps()
         else:
             deltaTime: float = 0
 
         player.resolveVelocities(deltaTime)
+        # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()
         screen.render()
         screen.clear()

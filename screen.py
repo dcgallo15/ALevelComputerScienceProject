@@ -28,6 +28,7 @@ class Screen():
     def render(self) -> None:
         for i in range(len(self.__objects)):
             obj: Object = self.__objects[i]
+            # creates a pygame rect object then draws it to the correct position on the screen
             pygame.draw.rect(self.__screen, obj.getColor(), pygame.Rect(
                 obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()))
         pygame.display.flip()

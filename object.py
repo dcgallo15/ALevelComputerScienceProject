@@ -30,6 +30,7 @@ class Object():
     def getCollision(self) -> bool:
         return self.__collision
 
+    # Tranlates the player by a vector
     def translate(self, vec: Vector) -> None:
         self.__xPos += vec.getX()
         self.__yPos += vec.getY()
@@ -68,9 +69,11 @@ class Player(Object):
     def resolveVelocities(self, deltaTime: int) -> None:
         totalX: int = 0
         totalY: int = 0
+        # Sums each of the X and Y components
         for i in range(len(self.__velocities)):
             totalX += self.__velocities[i].getX()
             totalY += self.__velocities[i].getY()
+        # Translates the player in the direction of these velocities multiplied by the change in time
         self.translateCartesian(int(totalX * deltaTime),
                                 int(totalY * deltaTime))
 
@@ -78,16 +81,21 @@ class Player(Object):
         return self.__speed
 
     def stopAtBounds(self, width: int, height: int) -> None:
+        # if the player is trying to go past any bounds of the screen then an opposite velocity is applied
+        # Top bound
         if self.getYPos() <= 0:
             self.addVelocity(Vector(self.__speed, -1 * 3 * pi / 2))
+        # Bottom Bound
         elif self.getYPos() + self.getHeight() >= height:
             self.addVelocity(Vector(self.__speed, -1 * pi / 2))
-
+        # Left Bound
         if self.getXPos() <= 0:
             self.addVelocity(Vector(self.__speed, 0))
+        # Right Bound
         elif self.getXPos() + self.getWidth() >= width:
             self.addVelocity(Vector(self.__speed, pi))
 
+    # TODO: finish and test
     def collides(self, object: Object, deltaTime: float) -> None:
         for i in range(self.getHeight()):
             if (self.getYPos() + i > object.getYPos() and self.getYPos() + i < object.getYPos() + object.getHeight()):
@@ -104,8 +112,8 @@ class Player(Object):
                             Vector(deltaTime * self.__speed * self.__speed, 0))
                         break
 
-    # Check the positions of the platforms placed in the level
     def isStoodOnGround(self, level: list, width: int, height: int) -> bool:
+        # Check the positions of the platforms placed in the level
         # then compare these with player positions to see if the player
         # is stood on them
         objWidth = (width / len(level[0]))
@@ -113,10 +121,13 @@ class Player(Object):
         for y in range(len(level)):
             for x in range(len(level[0])):
                 if level[y][x] != "0":
+                    # recalculates the postion of each platform
                     objXpos = (objWidth) * x
                     objYpos = (objHeight) * y
                     for i in range(self.getWidth()):
                         for j in range(int(objHeight)):
+                            # checks if the player is stood on the platforms
+                            # checks if both the height and width are in range
                             if self.getYPos() + self.getHeight() == objYpos + j and self.getXPos() + i == objXpos:
                                 return True
         return False
