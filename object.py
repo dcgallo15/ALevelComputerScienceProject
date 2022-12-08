@@ -96,7 +96,7 @@ class Player(Object):
             self.addVelocity(Vector(self.__speed, pi))
 
     # TODO: finish and test
-    def collides(self, object: Object, deltaTime: float) -> None:
+    def collides(self, object: Object, deltaTime: float) -> None:  # VERSION 2.7
         for i in range(self.getHeight()):
             if (self.getYPos() + i > object.getYPos() and self.getYPos() + i < object.getYPos() + object.getHeight()):
                 # Left side

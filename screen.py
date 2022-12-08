@@ -74,7 +74,7 @@ class Screen():
                         Object(objWidth, objHeight, x * objWidth,
                                y * objHeight, color, True))
 
-    def objectCollsion(self, deltaTime: float) -> None:
+    def objectCollsion(self, deltaTime: float) -> None:  # VERSION 2.7
         # NOTE: Player is object with index 0
         player: Player = self.__objects[0]
         for i in range(1, len(self.__objects)):
