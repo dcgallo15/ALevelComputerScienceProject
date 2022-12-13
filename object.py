@@ -124,10 +124,12 @@ class Player(Object):
                     # recalculates the postion of each platform
                     objXpos = (objWidth) * x
                     objYpos = (objHeight) * y
-                    for i in range(self.getWidth()):
+                    # For more consistency in the loops
+                    for i in range(int(objWidth)):
                         for j in range(int(objHeight)):
                             # checks if the player is stood on the platforms
                             # checks if both the height and width are in range
-                            if self.getYPos() + self.getHeight() == objYpos + j and self.getXPos() + i == objXpos:
+                            if self.getYPos() + self.getHeight() == objYpos + j and (self.getXPos() + i == objXpos or self.getXPos() - (self.getWidth() // 2) + i == objXpos):
+                                # added the addition or to fix overhang bug and the player falling into the floor
                                 return True
         return False
