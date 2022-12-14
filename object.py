@@ -140,21 +140,65 @@ class Enemy(Player):
     def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, speed: int, collision: bool = False) -> None:
         super().__init__(width, height, xPos, yPos, color, velocities, speed, collision)
 
+    # Initialise a member variable that store each of the positions that the enemy can go
+    def getPositionsFromLevel(self, level: list, screenWidth: int, screenHeight: int) -> None:
+        self.__availablePositons: list = []  # list of tuples
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                # indexes are multiplied by negative 1 beacuse python indexing wraps and so that the bottom of the list has an X position of 0
+                if level[-1 * y][-1 * x] == "0":
+                    self.__availablePositons.append((
+                        int(x * (screenWidth / len(level[0]))), int(y * (screenHeight / len(level)))))
+        print(self.__availablePositons)
+
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
-        # list of available positions relative to where the enemy is such as: platform positions and ground level positions
+        # list of available positions to move to
         # position of the player
-        # then move the player in a direction and the enemy's speed
 
         # Algorithm:
-        # start position
-        # end position
-        # incrementally moves the enemy towards the player
+        #
+        #
+        #
+
         startPos = (self.getXPos(), self.getYPos())
         endPos = (playerPosition[0], playerPosition[1])
-        pass
+
+        # checks which of the available positions is closest to the player's position
+        # to do this the list is ordered
+
+        # NOTE:
+        # the positions are ordered by X value since that is the way that the list is generated
+        # each X value is a multiple of the square's width
+        # """in this case 30"""
+        # the player's position will always be available
+        # since the player cannot be inside a platform
+        # so do something similar to a binary search to find the closest available position on the X component
+        # due to the level layouts there will always be a direct path to the player
+        # repeat for the Y component
+
+        for i in range(len(self.__availablePositons)):
+            pass
 
 
 if __name__ == "__main__":
+    level1 = [
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "1111111111111111",
+        "0000000000000000",  # Ground Level
+        "0000000000000000",
+    ]
     enemy = Enemy(10, 10, 0, 0, (0, 0, 0), [], 5, True)
-    enemy.moveTowardsPlayer(100, 100)
+    enemy.getPositionsFromLevel(level1, 640, 480)
