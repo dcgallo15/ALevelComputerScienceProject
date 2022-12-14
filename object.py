@@ -133,3 +133,28 @@ class Player(Object):
                                 # added the addition or to fix overhang bug and the player falling into the floor
                                 return True
         return False
+
+
+# Version 3.1
+class Enemy(Player):
+    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, speed: int, collision: bool = False) -> None:
+        super().__init__(width, height, xPos, yPos, color, velocities, speed, collision)
+
+    # playerPosition = (player.getXpos(), player.getYpos())
+    def moveTowardsPlayer(self, playerPosition: tuple):
+        # list of available positions relative to where the enemy is such as: platform positions and ground level positions
+        # position of the player
+        # then move the player in a direction and the enemy's speed
+
+        # Algorithm:
+        # start position
+        # end position
+        # incrementally moves the enemy towards the player
+        startPos = (self.getXPos(), self.getYPos())
+        endPos = (playerPosition[0], playerPosition[1])
+        pass
+
+
+if __name__ == "__main__":
+    enemy = Enemy(10, 10, 0, 0, (0, 0, 0), [], 5, True)
+    enemy.moveTowardsPlayer(100, 100)
