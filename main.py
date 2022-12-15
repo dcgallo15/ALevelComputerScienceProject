@@ -54,9 +54,13 @@ def main() -> int:
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.append("D")
-                    # Up
+                    # Jump
                     elif event.key == pygame.K_w:
-                        keysDown.append("W")
+                        # Fixes infinite jump
+                        # this makes it so that jump cannot be held down
+                        if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == True:
+                            player.addVelocity(
+                                Vector(player.getSpeed() * player.getSpeed(), 3 * pi / 2))
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.append("S")
@@ -68,18 +72,17 @@ def main() -> int:
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.remove("D")
-                    # Up
-                    elif event.key == pygame.K_w:
-                        keysDown.remove("W")
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
 
+        # Player Gravity
+        if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
+            # Gravity Velocity
+            player.addVelocity(Vector(player.getSpeed(), pi / 2))
+
+        # Adds player movement vectors
         # Checks which keys are in the list and are held down
-        if "W" in keysDown:
-            if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == True:
-                player.addVelocity(
-                    Vector(player.getSpeed() * player.getSpeed(), 3 * pi / 2))
         if "S" in keysDown:
             pass  # CROUCH
         if "A" in keysDown:
@@ -88,11 +91,6 @@ def main() -> int:
             player.addVelocity(Vector(player.getSpeed(), 0))
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
-
-        # Player Gravity
-        if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
-            # Gravity Velocity
-            player.addVelocity(Vector(player.getSpeed(), pi / 2))
 
         # Enemy Gravity
         if enemy.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
