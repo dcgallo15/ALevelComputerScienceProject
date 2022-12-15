@@ -91,6 +91,7 @@ def main() -> int:
             player.addVelocity(Vector(player.getSpeed(), 0))
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
+        enemy.stopAtBounds(screen.getWidth(), screen.getHeight())
 
         # Enemy Gravity
         if enemy.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
