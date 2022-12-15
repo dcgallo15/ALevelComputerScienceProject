@@ -58,7 +58,8 @@ class Player(Object):
 
     # This method will remove the first occurence of the velocity in the velocities list
     def removeVelocity(self, vel: Vector) -> None:
-        self.__velocities.remove(vel)
+        if vel in self.__velocities:
+            self.__velocities.remove(vel)
 
     def resetVelocities(self) -> None:
         self.__velocities = []
@@ -139,7 +140,9 @@ class Player(Object):
 class Enemy(Player):
     def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, speed: int, collision: bool = False) -> None:
         super().__init__(width, height, xPos, yPos, color, velocities, speed, collision)
-        self.__availablePositons = []
+        self.__availablePositons: list = []
+        # This will control if the enemy should find the player or avoid them
+        self.__find: bool = True
 
     # Initialise a member variable that store each of the positions that the enemy can go
     def getPositionsFromLevel(self, level: list, screenWidth: int, screenHeight: int) -> None:
@@ -151,6 +154,10 @@ class Enemy(Player):
                     self.__availablePositons.append((
                         int(x * (screenWidth / len(level[0]))), int(y * (screenHeight / len(level)))))
         # print(self.__availablePositons)
+
+    # Will control wether the enemy attempts to find the player or not
+    def setFind(self, newFind: bool) -> None:
+        self.__find = newFind
 
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
@@ -179,37 +186,28 @@ class Enemy(Player):
         # repeat for the Y component
 
         # For the first attempt only take into account the X direction
-        distance = ((endPos[0] - currentPos[0]))
+        xDistance = ((endPos[0] - currentPos[0]))
         # This ensures that the enemy does not walk into the player
         # However, this does not ensure that the player cannot walk into the enemy
-        if sqrt(distance ** 2) < self.getWidth():
+        if sqrt(xDistance ** 2) < self.getWidth():
             return
 
-        if distance < 0:
-            self.addVelocity(Vector(self.getSpeed(), pi))
+        # Will check if the enemy should move towards the player in the X direction
+        # Calculates the correct direction to move
+        if xDistance < 0:
+            if self.__find == True:
+                self.addVelocity(Vector(self.getSpeed(), pi))
+                return
+
+            if self.__find == False:
+                self.addVelocity(Vector(self.getSpeed(),  0))
+                return
+
         else:
-            self.addVelocity(Vector(self.getSpeed(),  0))
+            if self.__find == True:
+                self.addVelocity(Vector(self.getSpeed(),  0))
+                return
 
-
-if __name__ == "__main__":
-    level1 = [
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "1111111111111111",
-        "0000000000000000",  # Ground Level
-        "0000000000000000",
-    ]
-    enemy = Enemy(10, 10, 0, 0, (0, 0, 0), [], 5, True)
-    enemy.getPositionsFromLevel(level1, 640, 480)
-    enemy.moveTowardsPlayer((100, 100))
+            if self.__find == True:
+                self.addVelocity(Vector(self.getSpeed(), pi))
+                return
