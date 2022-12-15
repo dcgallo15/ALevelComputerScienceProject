@@ -1,6 +1,6 @@
 import pygame
 from screen import Screen
-from object import Object, Player
+from object import Object, Player, Enemy
 from vector import Vector
 from math import pi
 
@@ -21,14 +21,22 @@ def main() -> int:
     pygame.init()
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
-    player = Player(40, 40, 10, 10, (255, 0, 255), [], 20, True)
+    player = Player(40, 40, 10, 360, (255, 0, 255), [], 20, True)
     # player must be first object attached to the screen
+    enemy = Enemy(40, 40, 600, 360, (255, 0, 0), [], 10, True)
+    enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
     screen.attachObject(player)
+    screen.attachObject(enemy)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
 
     # This will loop will run throughout the playing of the level
     while gameRunning == True:
+        if clock.get_fps() > 0:  # ensures that velocity is dependent on time
+            deltaTime: float = (clock.get_time()) / clock.get_fps()
+        else:
+            deltaTime: float = 0
+
         # Event handling loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # For the quit button
@@ -81,17 +89,22 @@ def main() -> int:
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
 
+        # Player Gravity
         if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
-            player.addVelocity(Vector(player.getSpeed(), pi / 2))  # Gravity
+            # Gravity Velocity
+            player.addVelocity(Vector(player.getSpeed(), pi / 2))
 
-        if clock.get_fps() > 0:  # ensures that velocity is dependent on time
-            deltaTime: float = (clock.get_time()) / clock.get_fps()
-        else:
-            deltaTime: float = 0
+        # Enemy Gravity
+        if enemy.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
+            # Gravity Velocity
+            enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
+        enemy.moveTowardsPlayer((player.getXPos(), player.getYPos()))
         player.resolveVelocities(deltaTime)
+        enemy.resolveVelocities(deltaTime)
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()
+        enemy.resetVelocities()
         screen.render()
         screen.clear()
         clock.tick(60)

@@ -139,6 +139,7 @@ class Player(Object):
 class Enemy(Player):
     def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, speed: int, collision: bool = False) -> None:
         super().__init__(width, height, xPos, yPos, color, velocities, speed, collision)
+        self.__availablePositons = []
 
     # Initialise a member variable that store each of the positions that the enemy can go
     def getPositionsFromLevel(self, level: list, screenWidth: int, screenHeight: int) -> None:
@@ -149,7 +150,7 @@ class Enemy(Player):
                 if level[-1 * y][-1 * x] == "0":
                     self.__availablePositons.append((
                         int(x * (screenWidth / len(level[0]))), int(y * (screenHeight / len(level)))))
-        print(self.__availablePositons)
+        # print(self.__availablePositons)
 
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
@@ -161,8 +162,8 @@ class Enemy(Player):
         #
         #
 
-        startPos = (self.getXPos(), self.getYPos())
         endPos = (playerPosition[0], playerPosition[1])
+        currentPos = (self.getXPos(), self.getYPos())
 
         # checks which of the available positions is closest to the player's position
         # to do this the list is ordered
@@ -177,8 +178,17 @@ class Enemy(Player):
         # due to the level layouts there will always be a direct path to the player
         # repeat for the Y component
 
-        for i in range(len(self.__availablePositons)):
-            pass
+        # For the first attempt only take into account the X direction
+        distance = ((endPos[0] - currentPos[0]))
+        # This ensures that the enemy does not walk into the player
+        # However, this does not ensure that the player cannot walk into the enemy
+        if sqrt(distance ** 2) < self.getWidth():
+            return
+
+        if distance < 0:
+            self.addVelocity(Vector(self.getSpeed(), pi))
+        else:
+            self.addVelocity(Vector(self.getSpeed(),  0))
 
 
 if __name__ == "__main__":
@@ -202,3 +212,4 @@ if __name__ == "__main__":
     ]
     enemy = Enemy(10, 10, 0, 0, (0, 0, 0), [], 5, True)
     enemy.getPositionsFromLevel(level1, 640, 480)
+    enemy.moveTowardsPlayer((100, 100))
