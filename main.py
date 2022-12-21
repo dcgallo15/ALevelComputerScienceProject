@@ -77,9 +77,13 @@ def main() -> int:
                         keysDown.remove("S")
 
         # Player Gravity
+        # When the player is not stood on ground then there will be a gravity velcoity added
         if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
-            # Gravity Velocity
-            player.addVelocity(Vector(player.getSpeed(), pi / 2))
+            # When the player is stood on top of the enemy there will be no gravity added
+            # This acts as a reaction force from the enemy and stops the player from falling through the enemy
+            if player.collidesObjectY(enemy) == False:
+                # Gravity Velocity
+                player.addVelocity(Vector(player.getSpeed(), pi / 2))
 
         # Adds player movement vectors
         # Checks which keys are in the list and are held down
@@ -89,6 +93,10 @@ def main() -> int:
             player.addVelocity(Vector(player.getSpeed(), pi))
         if "D" in keysDown:
             player.addVelocity(Vector(player.getSpeed(), 0))
+
+        # If any keys have been pressed
+        if len(keysDown) > 0:
+            player.collidesObjectX(enemy)
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
         enemy.stopAtBounds(screen.getWidth(), screen.getHeight())

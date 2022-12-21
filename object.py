@@ -96,22 +96,29 @@ class Player(Object):
         elif self.getXPos() + self.getWidth() >= width:
             self.addVelocity(Vector(self.__speed, pi))
 
-    # TODO: finish and test
-    def collides(self, object: Object, deltaTime: float) -> None:  # VERSION 2.7
-        for i in range(self.getHeight()):
-            if (self.getYPos() + i > object.getYPos() and self.getYPos() + i < object.getYPos() + object.getHeight()):
-                # Left side
-                if self.getXPos() < object.getXPos():
-                    if self.getXPos() + self.getWidth() >= object.getXPos() and self.getXPos() <= object.getXPos() + object.getWidth():
-                        self.addVelocity(
-                            Vector(deltaTime * self.__speed * self.__speed, pi))
-                        break  # so the velocity is not applied multiple times
-                # Right side
-                if self.getXPos() > object.getXPos():
-                    if self.getXPos() >= object.getXPos() and self.getXPos() <= object.getXPos() + object.getWidth():
-                        self.addVelocity(
-                            Vector(deltaTime * self.__speed * self.__speed, 0))
-                        break
+    # Version 2.7
+    # This procedure will handle only horizontal collisions
+    def collidesObjectX(self, obj: Object) -> None:
+        # This causes the object to push the player when the player isn't moving
+        # So this is only called when the player is pressing a movement key
+        if self.getYPos() in range(obj.getYPos(), obj.getYPos() + obj.getHeight()):
+            # The // 2 is to determine which side the player is on of the object so that an opposite velocity can be properly applied
+            # Moves the player right since the left side has collided
+            if self.getXPos() in range(obj.getXPos() + (obj.getWidth() // 2), obj.getXPos() + obj.getWidth()):
+                self.addVelocity(Vector(self.__speed, 0))
+            # Moves the player left since the right side has collided
+            if self.getXPos() + self.getWidth() in range(obj.getXPos(), obj.getXPos() + (obj.getWidth() // 2)):
+                self.addVelocity(Vector(self.__speed, pi))
+
+    # Version 2.7
+    def collidesObjectY(self, obj: Object) -> bool:
+        # Checks if the X of the player is within the X of the Enemy
+        # This accounts for both the player's and enemy's widths
+        if self.getXPos() in range(obj.getXPos(), obj.getXPos() + obj.getWidth()) or self.getXPos() + self.getWidth() in range(obj.getXPos(), obj.getXPos() + obj.getWidth()):
+            # If the player's Y from the bottom of the player is within the range of the Object's Height
+            if self.getYPos() + self.getHeight() in range(obj.getYPos(), obj.getYPos() + obj.getHeight()):
+                return True
+        return False
 
     def isStoodOnGround(self, level: list, width: int, height: int) -> bool:
         # Check the positions of the platforms placed in the level
