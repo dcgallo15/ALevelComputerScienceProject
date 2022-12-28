@@ -46,11 +46,12 @@ class Object():
 
 
 class Player(Object):
-    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, speed: int, collision: bool = False) -> None:
+    def __init__(self, width: int, height: int, xPos: int, yPos: int, img, velocities: list, speed: int, collision: bool = False) -> None:
         # Calls object's constructor
-        super().__init__(width, height, xPos, yPos, color, collision)
+        super().__init__(width, height, xPos, yPos, (255, 255, 255), collision)
         self.__speed = speed
         self.__velocities = velocities  # List of Vector objects
+        self.__sprite = img
 
     # This method will add another velocity to the end of the list
     def addVelocity(self, vel: Vector) -> None:
@@ -66,6 +67,12 @@ class Player(Object):
 
     def getVelocities(self) -> list:
         return self.__velocities
+
+    def setSprite(self, img) -> None:
+        self.__sprite = img
+
+    def getSprite(self):
+        return self.__sprite
 
     def resolveVelocities(self, deltaTime: int) -> None:
         totalX: int = 0
@@ -145,9 +152,9 @@ class Player(Object):
 
 # Version 3.1
 class Enemy(Player):
-    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, velocities: list, speed: int, collision: bool = False) -> None:
-        super().__init__(width, height, xPos, yPos, color, velocities, speed, collision)
-        self.__availablePositons: list = []
+    def __init__(self, width: int, height: int, xPos: int, yPos: int, img, velocities: list, speed: int, collision: bool = False) -> None:
+        super().__init__(width, height, xPos, yPos,
+                         img, velocities, speed, collision)
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
 
@@ -179,20 +186,7 @@ class Enemy(Player):
         endPos = (playerPosition[0], playerPosition[1])
         currentPos = (self.getXPos(), self.getYPos())
 
-        # checks which of the available positions is closest to the player's position
-        # to do this the list is ordered
-
-        # NOTE:
-        # the positions are ordered by X value since that is the way that the list is generated
-        # each X value is a multiple of the square's width
-        # """in this case 30"""
-        # the player's position will always be available
-        # since the player cannot be inside a platform
-        # so do something similar to a binary search to find the closest available position on the X component
-        # due to the level layouts there will always be a direct path to the player
-        # repeat for the Y component
-
-        # For the first attempt only take into account the X direction
+        # This takes into account of the X direction
         xDistance = ((endPos[0] - currentPos[0]))
         # This ensures that the enemy does not walk into the player
         # However, this does not ensure that the player cannot walk into the enemy
