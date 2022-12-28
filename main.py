@@ -1,6 +1,7 @@
 import pygame
 from screen import Screen
 from object import Object, Player, Enemy
+from animationState import animationState, animationManager
 from vector import Vector
 from math import pi
 
@@ -19,14 +20,28 @@ def main() -> int:
     arrowKeys: bool = False
 
     pygame.init()
+
+    # Animation managers and States setup
+    state = animationState()
+
+    playerAnimationManager = animationManager()
+    playerAnimationManager.setAnimation(state.IDLE)
+
+    IDLE0 = pygame.image.load("img/IDLE0.png")
+
+    playerAnimationManager.setupStates(state.IDLE, IDLE0)
+
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
-    player = Player(40, 40, 10, 360, (255, 0, 255), [], 20, True)
+    player = Player(playerAnimationManager.getCurrentAnimation().get_width(), playerAnimationManager.getCurrentAnimation().get_height(),
+                    10, playerAnimationManager.getCurrentAnimation().get_height() + 10, playerAnimationManager.getCurrentAnimation(), [], 20, True)
     # player must be first object attached to the screen
-    enemy = Enemy(40, 40, 600, 360, (255, 0, 0), [], 10, True)
+    enemy = Enemy(40, 40, 600, 360,
+                  playerAnimationManager.getCurrentAnimation(), [], 10, True)
     enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
     screen.attachObject(player)
-    screen.attachObject(enemy)
+    # TODO
+    # screen.attachObject(enemy)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
 
