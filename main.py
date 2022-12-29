@@ -26,10 +26,15 @@ def main() -> int:
 
     playerAnimationManager = animationManager()
     playerAnimationManager.setAnimation(state.IDLE)
+    playerAnimationCounter = 0
 
     IDLE0 = pygame.image.load("img/IDLE0.png")
+    RUNNINGRIGHT0 = pygame.image.load("img/RUNNINGRIGHT0.png")
+    RUNNINGRIGHT1 = pygame.image.load("img/RUNNINGRIGHT1.png")
 
     playerAnimationManager.setupStates(state.IDLE, IDLE0)
+    playerAnimationManager.setupStates(
+        state.RUNNINGRIGHT, RUNNINGRIGHT0, RUNNINGRIGHT1)
 
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
@@ -69,6 +74,7 @@ def main() -> int:
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.append("D")
+                        playerAnimationManager.setAnimation(state.RUNNINGRIGHT)
                     # Jump
                     elif event.key == pygame.K_w:
                         # Fixes infinite jump
@@ -87,6 +93,7 @@ def main() -> int:
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.remove("D")
+                        playerAnimationManager.setAnimation(state.IDLE)
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
@@ -128,11 +135,18 @@ def main() -> int:
         enemy.moveTowardsPlayer((player.getXPos(), player.getYPos()))
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
+
+        if playerAnimationCounter > 2:
+            playerAnimationCounter = 0
+            playerAnimationManager.changeState()
+            player.setSprite(playerAnimationManager.getCurrentAnimation())
+
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()
         enemy.resetVelocities()
         screen.render()
         screen.clear()
+        playerAnimationCounter += deltaTime
         clock.tick(60)
 
     return 0
