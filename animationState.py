@@ -13,6 +13,7 @@ class animationManager():
         self.__state = animationState()
         self.__currentState: list = []
         self.__counter: int = 0
+        # Lists of the different animations
         self.__idle = []
         self.__runningLeft = []
         self.__runningRight = []
@@ -63,6 +64,8 @@ class animationManager():
         else:
             print("UNRECOGNISED ANIMATION STATE")
 
+        # Resets the counter when the state is changed
+        # So the new animation will start from the start of the list
         self.__counter = 0
 
     # Cycle to the next animation state
@@ -72,5 +75,6 @@ class animationManager():
         if self.__counter == (len(self.__currentState)):
             self.__counter = 0
 
+    # This will return a pygame image object
     def getCurrentAnimation(self):
         return self.__currentState[self.__counter]

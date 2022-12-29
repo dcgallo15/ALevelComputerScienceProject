@@ -24,6 +24,7 @@ def main() -> int:
     # Animation managers and States setup
     state = animationState()
 
+    # Initialises the player's animation manager
     playerAnimationManager = animationManager()
     playerAnimationManager.setAnimation(state.IDLE)
     playerAnimationCounter = 0
@@ -132,6 +133,7 @@ def main() -> int:
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
+        # Progress the animation every 2 seconds
         if playerAnimationCounter > 2:
             playerAnimationCounter = 0
             playerAnimationManager.changeState()
@@ -142,6 +144,7 @@ def main() -> int:
         enemy.resetVelocities()
         screen.render()
         screen.clear()
+        # Increments the animation timer counter
         playerAnimationCounter += deltaTime
         clock.tick(60)
 

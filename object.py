@@ -120,7 +120,7 @@ class Player(Object):
     # Version 2.7
     def collidesObjectY(self, obj: Object) -> bool:
         # Checks if the X of the player is within the X of the Enemy
-        # This accounts for both the player's and enemy's widths
+        # This accounts for both the player's and Object's widths
         if self.getXPos() in range(obj.getXPos(), obj.getXPos() + obj.getWidth()) or self.getXPos() + self.getWidth() in range(obj.getXPos(), obj.getXPos() + obj.getWidth()):
             # If the player's Y from the bottom of the player is within the range of the Object's Height
             if self.getYPos() + self.getHeight() in range(obj.getYPos(), obj.getYPos() + obj.getHeight()):
