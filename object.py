@@ -1,22 +1,23 @@
 from vector import Vector
 from math import atan, tan, sqrt, pi
+from animation import AnimationState, AnimationManager
 
 
 class Object():
     def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple, collision: bool = False) -> None:
         # Variable Initialisation
-        self.__w = width
-        self.__h = height
+        self._w = width
+        self._h = height
         self.__xPos = xPos
         self.__yPos = yPos
         self.__color = color
         self.__collision = collision
 
     def getWidth(self) -> int:
-        return self.__w
+        return self._w
 
     def getHeight(self) -> int:
-        return self.__h
+        return self._h
 
     def getXPos(self) -> int:
         return self.__xPos
@@ -46,30 +47,53 @@ class Object():
 
 
 class Player(Object):
-    def __init__(self, width: int, height: int, xPos: int, yPos: int, img, velocities: list, speed: int, collision: bool = False) -> None:
-        # Calls object's constructor
-        super().__init__(width, height, xPos, yPos, (255, 255, 255), collision)
+    # the sprite passed in here is the first sprite that the player will be rendered as
+    # it will be added to the IDLE list in the animation manager
+    def __init__(self, xPos: int, yPos: int, sprite, velocities: list, speed: int) -> None:
         self.__speed = speed
         self.__velocities = velocities  # List of Vector objects
-        self.__sprite = img
+
+        state = AnimationState()
+        self.__playerAnimManager = AnimationManager()
+        self.__playerAnimCounter: float = 0
+        self.__playerAnimManager.setupStates(state.IDLE, [sprite])
+        self.__playerAnimManager.setAnimation(
+            state.IDLE)  # Start in IDLE state
+        # Start in first IDLE animation
+        self.__sprite = sprite
+        # Calls object's constructor
+        super().__init__(self.__sprite.get_width(), self.__sprite.get_height(),
+                         xPos, yPos, (255, 255, 255), True)
+
+    # Animation Manager Methods:
+    def initAnimStates(self, state: AnimationState, animations: list) -> None:
+        self.__playerAnimManager.setupStates(state, animations)
+
+    def setAnimState(self, state: AnimationState) -> None:
+        self.__playerAnimManager.setAnimation(state)
+
+    # Checks the time since the change of the last animation
+    # It will chnage animation if the duration is larger than the time passed in
+    def nextAnimation(self, time: int) -> None:
+        if self.__playerAnimCounter > time:
+            self.__playerAnimManager.changeState()
+            self.__sprite = self.__playerAnimManager.getCurrentAnimation()
+
+    def incrementAnimCounter(self, amount: float) -> None:
+        self.__playerAnimCounter += amount
+
+    def getAnimCounter(self) -> float:
+        return self.__playerAnimCounter
 
     # This method will add another velocity to the end of the list
     def addVelocity(self, vel: Vector) -> None:
         self.__velocities.append(vel)
-
-    # This method will remove the first occurence of the velocity in the velocities list
-    def removeVelocity(self, vel: Vector) -> None:
-        if vel in self.__velocities:
-            self.__velocities.remove(vel)
 
     def resetVelocities(self) -> None:
         self.__velocities = []
 
     def getVelocities(self) -> list:
         return self.__velocities
-
-    def setSprite(self, img) -> None:
-        self.__sprite = img
 
     def getSprite(self):
         return self.__sprite
@@ -103,7 +127,6 @@ class Player(Object):
         elif self.getXPos() + self.getWidth() >= width:
             self.addVelocity(Vector(self.__speed, pi))
 
-    # Version 2.7
     # This procedure will handle only horizontal collisions
     def collidesObjectX(self, obj: Object) -> None:
         # This causes the object to push the player when the player isn't moving
@@ -117,7 +140,6 @@ class Player(Object):
             if self.getXPos() + self.getWidth() in range(obj.getXPos(), obj.getXPos() + (obj.getWidth() // 2)):
                 self.addVelocity(Vector(self.__speed, pi))
 
-    # Version 2.7
     def collidesObjectY(self, obj: Object) -> bool:
         # Checks if the X of the player is within the X of the Enemy
         # This accounts for both the player's and Object's widths
@@ -152,9 +174,9 @@ class Player(Object):
 
 # Version 3.1
 class Enemy(Player):
-    def __init__(self, width: int, height: int, xPos: int, yPos: int, img, velocities: list, speed: int, collision: bool = False) -> None:
-        super().__init__(width, height, xPos, yPos,
-                         img, velocities, speed, collision)
+    def __init__(self, xPos: int, yPos: int, sprite, velocities: list, speed: int) -> None:
+        super().__init__(xPos, yPos,
+                         sprite, velocities, speed)
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
 

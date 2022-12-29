@@ -1,7 +1,7 @@
 import pygame
 from screen import Screen
 from object import Object, Player, Enemy
-from animationState import animationState, animationManager
+from animation import AnimationState, AnimationManager
 from vector import Vector
 from math import pi
 
@@ -13,6 +13,7 @@ def main() -> int:
 
     # Main variables initialisation
     gameRunning: bool = True
+    state = AnimationState()
     keysDown = []  # keeps track of the keys that are pressed down
 
     # this will be used later and be controlled by the menu to ensure that
@@ -21,33 +22,27 @@ def main() -> int:
 
     pygame.init()
 
-    # Animation managers and States setup
-    state = animationState()
-
-    # Initialises the player's animation manager
-    playerAnimationManager = animationManager()
-    playerAnimationManager.setAnimation(state.IDLE)
-    playerAnimationCounter = 0
-
-    IDLE0 = pygame.image.load("img/IDLE0.png")
-    RUNNINGRIGHT0 = pygame.image.load("img/RUNNINGRIGHT0.png")
-    RUNNINGRIGHT1 = pygame.image.load("img/RUNNINGRIGHT1.png")
-
-    playerAnimationManager.setupStates(state.IDLE, IDLE0)
-    playerAnimationManager.setupStates(
-        state.RUNNINGRIGHT, RUNNINGRIGHT0, RUNNINGRIGHT1)
+    # Player setup
+    # Loading Player Images
+    PL_IDLE0 = pygame.image.load("img/IDLE0.png")
+    PL_RUNNINGRIGHT0 = pygame.image.load("img/RUNNINGRIGHT0.png")
+    PL_RUNNINGRIGHT1 = pygame.image.load("img/RUNNINGRIGHT1.png")
 
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
-    player = Player(playerAnimationManager.getCurrentAnimation().get_width(), playerAnimationManager.getCurrentAnimation().get_height(),
-                    10, playerAnimationManager.getCurrentAnimation().get_height() + 10, playerAnimationManager.getCurrentAnimation(), [], 20, True)
+    player = Player(10, 0, PL_IDLE0, [], 20)
+    #player.initAnimStates(state.IDLE, PL_IDLE0)
+    player.initAnimStates(state.RUNNINGRIGHT,
+                          [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
     # player must be first object attached to the screen
-    enemy = Enemy(40, 40, 600, 360,
-                  playerAnimationManager.getCurrentAnimation(), [], 10, True)
-    enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
     screen.attachObject(player)
+
+    # Enemy Setup:
+    enemy = Enemy(10, 0, PL_IDLE0, [], 10)
+    # ???
+    #enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
     # TODO
-    # screen.attachObject(enemy)
+    screen.attachObject(enemy)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
 
@@ -75,7 +70,7 @@ def main() -> int:
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.append("D")
-                        playerAnimationManager.setAnimation(state.RUNNINGRIGHT)
+                        player.setAnimState(state.RUNNINGRIGHT)
                     # Jump
                     elif event.key == pygame.K_w:
                         # Fixes infinite jump
@@ -94,7 +89,7 @@ def main() -> int:
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.remove("D")
-                        playerAnimationManager.setAnimation(state.IDLE)
+                        player.setAnimState(state.IDLE)
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
@@ -134,18 +129,17 @@ def main() -> int:
         enemy.resolveVelocities(deltaTime)
 
         # Progress the animation every 2 seconds
-        if playerAnimationCounter > 2:
-            playerAnimationCounter = 0
-            playerAnimationManager.changeState()
-            player.setSprite(playerAnimationManager.getCurrentAnimation())
+        player.nextAnimation(20)
+        # Increments the animation timer counter
+        player.incrementAnimCounter(deltaTime)
 
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()
         enemy.resetVelocities()
+        # Renders the attached objects
         screen.render()
+        # Clears the screen
         screen.clear()
-        # Increments the animation timer counter
-        playerAnimationCounter += deltaTime
         clock.tick(60)
 
     return 0

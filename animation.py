@@ -1,5 +1,5 @@
 # This small class will make the code more readable
-class animationState():
+class AnimationState():
     def __init__(self) -> None:
         self.IDLE = 0
         self.RUNNINGLEFT = 2
@@ -8,9 +8,9 @@ class animationState():
         self.ATTACKRIGHT = 5
 
 
-class animationManager():
+class AnimationManager():
     def __init__(self) -> None:
-        self.__state = animationState()
+        self.__state = AnimationState()
         self.__currentState: list = []
         self.__counter: int = 0
         # Lists of the different animations
@@ -20,26 +20,26 @@ class animationManager():
         self.__attackLeft = []
         self.__attackRight = []
 
-    def setupStates(self, animState: int, *args):
+    def setupStates(self, animState: int, animations: list):
         if animState == self.__state.IDLE:
-            for arg in args:
-                self.__idle.append(arg)
+            for anim in animations:
+                self.__idle.append(anim)
 
         elif animState == self.__state.RUNNINGLEFT:
-            for arg in args:
-                self.__runningLeft.append(arg)
+            for anim in animations:
+                self.__runningLeft.append(anim)
 
         elif animState == self.__state.RUNNINGRIGHT:
-            for arg in args:
-                self.__runningRight.append(arg)
+            for anim in animations:
+                self.__runningRight.append(anim)
 
         elif animState == self.__state.ATTACKLEFT:
-            for arg in args:
-                self.__attackLeft.append(arg)
+            for anim in animations:
+                self.__attackLeft.append(anim)
 
         elif animState == self.__state.ATTACKRIGHT:
-            for arg in args:
-                self.__attackRight.append(arg)
+            for anim in animations:
+                self.__attackRight.append(anim)
 
         else:
             print("UNRECOGNISED ANIMATION STATE")
