@@ -2,6 +2,7 @@ import pygame
 from screen import Screen
 from object import Object, Player, Enemy
 from animation import AnimationState, AnimationManager
+from attack import Attack
 from vector import Vector
 from math import pi
 
@@ -32,10 +33,20 @@ def main() -> int:
     screen = Screen(640, 480)
     player = Player(10, 0, PL_IDLE0, [], 20)
     #player.initAnimStates(state.IDLE, PL_IDLE0)
+    player.initAnimStates(state.RUNNINGLEFT, [PL_IDLE0])
     player.initAnimStates(state.RUNNINGRIGHT,
                           [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
+    # Attacks initialisation
+    player.initAttacks(Attack(state.ATTACKRIGHT, 20, 10))
     # player must be first object attached to the screen
     screen.attachObject(player)
+
+    # TODO:
+    # Add proper platform collision
+    # Make a better pathfinding algorithm
+    # Ensure that the sprites are the correct width
+    # Finish adding the rest of the animations
+    # Add more attacks
 
     # Enemy Setup:
     enemy = Enemy(10, 0, PL_IDLE0, [], 10)
@@ -67,9 +78,12 @@ def main() -> int:
                     # Left
                     if event.key == pygame.K_a:
                         keysDown.append("A")
+                        player.setFacingRight(False)
+                        player.setAnimState(state.RUNNINGLEFT)
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.append("D")
+                        player.setFacingRight(True)
                         player.setAnimState(state.RUNNINGRIGHT)
                     # Jump
                     elif event.key == pygame.K_w:
@@ -86,6 +100,7 @@ def main() -> int:
                     # Left
                     if event.key == pygame.K_a:
                         keysDown.remove("A")
+                        player.setAnimState(state.IDLE)
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.remove("D")
@@ -93,6 +108,12 @@ def main() -> int:
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # left mouse click
+                if event.button == 1:
+                    player.attack(0, enemy)
+                    print(enemy.getHealth())
 
         # Player Gravity
         # When the player is not stood on ground then there will be a gravity velcoity added
@@ -129,7 +150,7 @@ def main() -> int:
         enemy.resolveVelocities(deltaTime)
 
         # Progress the animation every 2 seconds
-        player.nextAnimation(20)
+        player.nextAnimation(2)
         # Increments the animation timer counter
         player.incrementAnimCounter(deltaTime)
 
