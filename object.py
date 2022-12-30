@@ -90,15 +90,16 @@ class Player(Object):
     # This will check if the player instance passed in will be affected by this attack
     def attack(self, index: int, player) -> None:
         currentAttack: Attack = self.__attacks[index]
-        # Check if the player is within range of the object passed in
+        # Check if the player is within vertical range of the object passed in
         if self.getYPos() in range(player.getYPos(), player.getYPos() + player.getHeight()):
             if self.__facingRight == True:
+                # Checks if the right side of the player is within attack range of the enemy
                 if self.getXPos() + self.getWidth() in range(player.getXPos(),
                                                              player.getXPos() + currentAttack.getRange()):
                     # If it is then subtract the attack's health cost
-                    print("HERE")
                     player.decrementHealth(currentAttack.getHealthCost())
             else:
+                # Checks if the left side of the player is within attack range of the enemy
                 if currentAttack.getRange() + self.getXPos() in range(player.getXPos() + player.getWidth(),
                                                                       player.getXPos() + player.getWidth() + currentAttack.getRange()):
                     player.decrementHealth(currentAttack.getHealthCost())
@@ -236,16 +237,10 @@ class Enemy(Player):
     def setFind(self, newFind: bool) -> None:
         self.__find = newFind
 
+    # This will more the enemy in the direction of the player but is one dimensional and only takes
+    # into account the horizontal direction
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
-        # list of available positions to move to
-        # position of the player
-
-        # Algorithm:
-        #
-        #
-        #
-
         endPos = (playerPosition[0], playerPosition[1])
         currentPos = (self.getXPos(), self.getYPos())
 
