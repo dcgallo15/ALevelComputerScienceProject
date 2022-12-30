@@ -1,6 +1,7 @@
 from vector import Vector
 from math import atan, tan, sqrt, pi
 from animation import AnimationState, AnimationManager
+from attack import Attack
 
 
 class Object():
@@ -65,6 +66,26 @@ class Player(Object):
         super().__init__(self.__sprite.get_width(), self.__sprite.get_height(),
                          xPos, yPos, (255, 255, 255), True)
 
+        self.__attacks: list = []
+        facingRight: bool = True  # This is so that the attack directions are correct
+
+    # Takes in all the attacks that the player can perform
+    def initAttacks(self, *args: Attack) -> None:
+        for attack in args:
+            self.__attacks.append(attack)
+
+    def setFacingRight(self, right: bool) -> None:
+        self.__facingRight = right
+
+    # Will perform the attack move
+    # This will check if the player object passed in will be affected by this attack
+    def attack(self, index: int, player) -> None:
+        # Check if the player is within range of the object passed in
+        # If it is then subtract the attack's health cost
+        # If not do nothing
+        # Take into account the animation
+        pass
+
     # Animation Manager Methods:
     def initAnimStates(self, state: AnimationState, animations: list) -> None:
         self.__playerAnimManager.setupStates(state, animations)
@@ -78,6 +99,8 @@ class Player(Object):
         if self.__playerAnimCounter > time:
             self.__playerAnimManager.changeState()
             self.__sprite = self.__playerAnimManager.getCurrentAnimation()
+            # Resets the animation counter
+            self.__playerAnimCounter = 0
 
     def incrementAnimCounter(self, amount: float) -> None:
         self.__playerAnimCounter += amount
