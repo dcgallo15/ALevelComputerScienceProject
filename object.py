@@ -67,7 +67,8 @@ class Player(Object):
                          xPos, yPos, (255, 255, 255), True)
 
         self.__attacks: list = []
-        facingRight: bool = True  # This is so that the attack directions are correct
+        self.__facingRight: bool = True  # This is so that the attack directions are correct
+        self.__health: int = 100
 
     # Takes in all the attacks that the player can perform
     def initAttacks(self, *args: Attack) -> None:
@@ -77,14 +78,31 @@ class Player(Object):
     def setFacingRight(self, right: bool) -> None:
         self.__facingRight = right
 
+    def decrementHealth(self, damage: int) -> None:
+        self.__health -= damage
+        if self.__health <= 0:
+            print("Game Over")
+
+    def getHealth(self) -> int:
+        return self.__health
+
     # Will perform the attack move
-    # This will check if the player object passed in will be affected by this attack
+    # This will check if the player instance passed in will be affected by this attack
     def attack(self, index: int, player) -> None:
+        currentAttack: Attack = self.__attacks[index]
         # Check if the player is within range of the object passed in
-        # If it is then subtract the attack's health cost
-        # If not do nothing
-        # Take into account the animation
-        pass
+        if self.getYPos() in range(player.getYPos(), player.getYPos() + player.getHeight()):
+            if self.__facingRight == True:
+                if self.getXPos() + self.getWidth() in range(player.getXPos(),
+                                                             player.getXPos() + currentAttack.getRange()):
+                    # If it is then subtract the attack's health cost
+                    print("HERE")
+                    player.decrementHealth(currentAttack.getHealthCost())
+            else:
+                if currentAttack.getRange() + self.getXPos() in range(player.getXPos() + player.getWidth(),
+                                                                      player.getXPos() + player.getWidth() + currentAttack.getRange()):
+                    player.decrementHealth(currentAttack.getHealthCost())
+        # TODO: take into account the animation
 
     # Animation Manager Methods:
     def initAnimStates(self, state: AnimationState, animations: list) -> None:
