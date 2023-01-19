@@ -136,6 +136,10 @@ def main() -> int:
         # If any keys have been pressed
         if len(keysDown) > 0:
             player.collidesObjectX(enemy)
+            screen.objectCollsion(player)
+            screen.objectCollsion(enemy)
+            # NOTE: enemy will not collide yet
+            # NOTE: enemy can push player through blocks
 
         player.stopAtBounds(screen.getWidth(), screen.getHeight())
         enemy.stopAtBounds(screen.getWidth(), screen.getHeight())
