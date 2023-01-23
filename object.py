@@ -174,7 +174,8 @@ class Player(Object):
         # This causes the object to push the player when the player isn't moving
         # So this is only called when the player is pressing a movement key
         # This change ensures that bounds properly work
-        if self.getYPos() in range(obj.getYPos(), obj.getYPos() + obj.getHeight()) or obj.getYPos() in range(self.getYPos(), self.getYPos() + self.getHeight()):
+        # Player's speed is subtracted to stop weird clipping
+        if self.getYPos() in range(obj.getYPos(), obj.getYPos() + obj.getHeight() - self.getSpeed()) or obj.getYPos() in range(self.getYPos(), self.getYPos() + self.getHeight() - self.getSpeed()):
             # The // 2 is to determine which side the player is on of the object so that an opposite velocity can be properly applied
             # Moves the player right since the left side has collided
             if self.getXPos() in range(obj.getXPos() + (obj.getWidth() // 2), obj.getXPos() + obj.getWidth()):
@@ -237,6 +238,18 @@ class Enemy(Player):
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
         self.__find = newFind
+
+    # Is there a platform within a certain horizontal distance from the player?
+    # If so Jump
+    # If not then dont
+    # Takes in platform object as a parameter
+    def conditionalJump(self, object: Object):
+        # TODO: check Y level of Enemy with object Y level
+        if (self.getXPos() in range(object.getXPos() - object.getWidth(), object.getXPos() + object.getWidth())):
+            # Jump
+            print("HERE")
+            self.addVelocity(
+                Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
 
     # This will more the enemy in the direction of the player but is one dimensional and only takes
     # into account the horizontal direction
