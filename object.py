@@ -101,14 +101,18 @@ class Player(Object):
     def collidesObjectX(self, obj: Object) -> None:
         # This causes the object to push the player when the player isn't moving
         # So this is only called when the player is pressing a movement key
-        if self.getYPos() in range(obj.getYPos(), obj.getYPos() + obj.getHeight()):
+        # This change ensures that bounds properly work
+        # Player's speed is subtracted to stop weird clipping
+        if self.getYPos() in range(obj.getYPos(), obj.getYPos() + obj.getHeight() - self.getSpeed()) or obj.getYPos() in range(self.getYPos(), self.getYPos() + self.getHeight() - self.getSpeed()):
             # The // 2 is to determine which side the player is on of the object so that an opposite velocity can be properly applied
             # Moves the player right since the left side has collided
             if self.getXPos() in range(obj.getXPos() + (obj.getWidth() // 2), obj.getXPos() + obj.getWidth()):
                 self.addVelocity(Vector(self.__speed, 0))
+                self._collisionX = True
             # Moves the player left since the right side has collided
             if self.getXPos() + self.getWidth() in range(obj.getXPos(), obj.getXPos() + (obj.getWidth() // 2)):
                 self.addVelocity(Vector(self.__speed, pi))
+                self._collisionX = True
 
     # Version 2.7
     def collidesObjectY(self, obj: Object) -> bool:
@@ -151,21 +155,12 @@ class Enemy(Player):
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
 
-    # Initialise a member variable that store each of the positions that the enemy can go
-    def getPositionsFromLevel(self, level: list, screenWidth: int, screenHeight: int) -> None:
-        self.__availablePositons: list = []  # list of tuples
-        for y in range(len(level)):
-            for x in range(len(level[y])):
-                # indexes are multiplied by negative 1 beacuse python indexing wraps and so that the bottom of the list has an X position of 0
-                if level[-1 * y][-1 * x] == "0":
-                    self.__availablePositons.append((
-                        int(x * (screenWidth / len(level[0]))), int(y * (screenHeight / len(level)))))
-        # print(self.__availablePositons)
-
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
         self.__find = newFind
 
+    # This will more the enemy in the direction of the player but is one dimensional and only takes
+    # into account the horizontal direction
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
         # list of available positions to move to
@@ -201,6 +196,14 @@ class Enemy(Player):
 
         # Will check if the enemy should move towards the player in the X direction
         # Calculates the correct direction to move
+        if self._collisionX == True:
+            # Jump
+            self.addVelocity(
+                Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
+            # After the jump has been completed this ensures that another jump is not repeated
+            self._collisionX = False
+            return
+
         if xDistance < 0:
             if self.__find == True:
                 self.addVelocity(Vector(self.getSpeed(), pi))
@@ -218,3 +221,4 @@ class Enemy(Player):
             if self.__find == True:
                 self.addVelocity(Vector(self.getSpeed(), pi))
                 return
+        return
