@@ -226,12 +226,12 @@ class Enemy(Player):
 
     # Initialise a member variable that store each of the positions that the enemy can go
     def getPositionsFromLevel(self, level: list, screenWidth: int, screenHeight: int) -> None:
-        self.__availablePositons: list = []  # list of tuples
+        self.__filledPositions: list = []  # list of tuples
         for y in range(len(level)):
             for x in range(len(level[y])):
                 # indexes are multiplied by negative 1 beacuse python indexing wraps and so that the bottom of the list has an X position of 0
-                if level[-1 * y][-1 * x] == "0":
-                    self.__availablePositons.append((
+                if level[-1 * y][-1 * x] != "0":
+                    self.__filledPositions.append((
                         int(x * (screenWidth / len(level[0]))), int(y * (screenHeight / len(level)))))
         # print(self.__availablePositons)
 
@@ -255,11 +255,8 @@ class Enemy(Player):
     # into account the horizontal direction
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
-        endPos = (playerPosition[0], playerPosition[1])
-        currentPos = (self.getXPos(), self.getYPos())
-
         # This takes into account of the X direction
-        xDistance = ((endPos[0] - currentPos[0]))
+        xDistance = ((playerPosition[0] - self.getXPos()))
         # This ensures that the enemy does not walk into the player
         # However, this does not ensure that the player cannot walk into the enemy
         if sqrt(xDistance ** 2) < self.getWidth():
@@ -267,20 +264,23 @@ class Enemy(Player):
 
         # Will check if the enemy should move towards the player in the X direction
         # Calculates the correct direction to move
-        if xDistance < 0:
-            if self.__find == True:
-                self.addVelocity(Vector(self.getSpeed(), pi))
-                return
+        for i in range(1, len(self.__filledPositions)):
+            if self.getXPos() in range(self.__filledPositions[i-1][0], self.__filledPositions[i][0]):
+                if xDistance < 0:
+                    if self.__find == True:
+                        self.addVelocity(Vector(self.getSpeed(), pi))
+                        return
 
-            if self.__find == False:
-                self.addVelocity(Vector(self.getSpeed(),  0))
-                return
+                    if self.__find == False:
+                        self.addVelocity(Vector(self.getSpeed(),  0))
+                        return
 
-        else:
-            if self.__find == True:
-                self.addVelocity(Vector(self.getSpeed(),  0))
-                return
+                else:
+                    if self.__find == True:
+                        self.addVelocity(Vector(self.getSpeed(),  0))
+                        return
 
-            if self.__find == True:
-                self.addVelocity(Vector(self.getSpeed(), pi))
-                return
+                    if self.__find == True:
+                        self.addVelocity(Vector(self.getSpeed(), pi))
+                        return
+        return

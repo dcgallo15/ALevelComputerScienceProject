@@ -32,7 +32,7 @@ def main() -> int:
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
     player = Player(10, 0, PL_IDLE0, [], 20)
-    #player.initAnimStates(state.IDLE, PL_IDLE0)
+    # player.initAnimStates(state.IDLE, PL_IDLE0)
     player.initAnimStates(state.RUNNINGLEFT, [PL_IDLE0])
     player.initAnimStates(state.RUNNINGRIGHT,
                           [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
@@ -51,7 +51,7 @@ def main() -> int:
     # Enemy Setup:
     enemy = Enemy(10, 0, PL_IDLE0, [], 10)
     # ???
-    #enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
+    enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
     # TODO
     screen.attachObject(enemy)
     screen.parseLevel(level1)

@@ -84,8 +84,6 @@ class Screen():
         # Starts from 2 as player and enemy are first 2 objects always
         for i in range(2, len(self.__objects)):
             player.collidesObjectX(self.__objects[i])
-            if isinstance(player, Enemy) == True:
-                player.conditionalJump(self.__objects[i])
 
     # This will clear the screen (by default to black)
     def clear(self) -> None:
