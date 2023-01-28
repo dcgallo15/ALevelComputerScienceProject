@@ -69,6 +69,8 @@ class Player(Object):
         self.__attacks: list = []
         self.__facingRight: bool = True  # This is so that the attack directions are correct
         self.__health: int = 100
+        # This will keep  t4rack of horizontal collsions mostily for enemy pathfinding
+        self._collisionX: bool = False
 
     # Takes in all the attacks that the player can perform
     def initAttacks(self, *args: Attack) -> None:
@@ -180,9 +182,11 @@ class Player(Object):
             # Moves the player right since the left side has collided
             if self.getXPos() in range(obj.getXPos() + (obj.getWidth() // 2), obj.getXPos() + obj.getWidth()):
                 self.addVelocity(Vector(self.__speed, 0))
+                self._collisionX = True
             # Moves the player left since the right side has collided
             if self.getXPos() + self.getWidth() in range(obj.getXPos(), obj.getXPos() + (obj.getWidth() // 2)):
                 self.addVelocity(Vector(self.__speed, pi))
+                self._collisionX = True
 
     def collidesObjectY(self, obj: Object) -> bool:
         # Checks if the X of the player is within the X of the Enemy
@@ -252,8 +256,6 @@ class Enemy(Player):
                 Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
 
     # This will more the enemy in the direction of the player but is one dimensional and only takes
-    # into account the horizontal direction
-    # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
         # This takes into account of the X direction
         xDistance = ((playerPosition[0] - self.getXPos()))
@@ -264,23 +266,30 @@ class Enemy(Player):
 
         # Will check if the enemy should move towards the player in the X direction
         # Calculates the correct direction to move
-        for i in range(1, len(self.__filledPositions)):
-            if self.getXPos() in range(self.__filledPositions[i-1][0], self.__filledPositions[i][0]):
-                if xDistance < 0:
-                    if self.__find == True:
-                        self.addVelocity(Vector(self.getSpeed(), pi))
-                        return
+        print(self._collisionX)
+        if self._collisionX == True:
+            # Jump
+            self.addVelocity(
+                Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
+            # After the jump has been completed this ensures that another jump is not repeated
+            self._collisionX = False
+            return
 
-                    if self.__find == False:
-                        self.addVelocity(Vector(self.getSpeed(),  0))
-                        return
+        if xDistance < 0:
+            if self.__find == True:
+                self.addVelocity(Vector(self.getSpeed(), pi))
+                return
 
-                else:
-                    if self.__find == True:
-                        self.addVelocity(Vector(self.getSpeed(),  0))
-                        return
+            if self.__find == False:
+                self.addVelocity(Vector(self.getSpeed(),  0))
+                return
 
-                    if self.__find == True:
-                        self.addVelocity(Vector(self.getSpeed(), pi))
-                        return
+        else:
+            if self.__find == True:
+                self.addVelocity(Vector(self.getSpeed(),  0))
+                return
+
+            if self.__find == True:
+                self.addVelocity(Vector(self.getSpeed(), pi))
+                return
         return
