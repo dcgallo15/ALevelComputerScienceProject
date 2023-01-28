@@ -42,17 +42,12 @@ def main() -> int:
     screen.attachObject(player)
 
     # TODO:
-    # Add proper platform collision
-    # Make a better pathfinding algorithm
     # Ensure that the sprites are the correct width
     # Finish adding the rest of the animations
     # Add more attacks
 
     # Enemy Setup:
     enemy = Enemy(10, 0, PL_IDLE0, [], 10)
-    # ???
-    enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
-    # TODO
     screen.attachObject(enemy)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
