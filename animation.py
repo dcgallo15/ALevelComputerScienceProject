@@ -20,6 +20,7 @@ class AnimationManager():
         self.__attackLeft = []
         self.__attackRight = []
 
+    # This method is used to initialise the different animations
     def setupStates(self, animState: int, animations: list):
         if animState == self.__state.IDLE:
             for anim in animations:
