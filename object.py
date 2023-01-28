@@ -69,7 +69,7 @@ class Player(Object):
         self.__attacks: list = []
         self.__facingRight: bool = True  # This is so that the attack directions are correct
         self.__health: int = 100
-        # This will keep  t4rack of horizontal collsions mostily for enemy pathfinding
+        # This will keep track of horizontal collsions mostily for enemy pathfinding
         self._collisionX: bool = False
 
     # Takes in all the attacks that the player can perform
@@ -228,32 +228,9 @@ class Enemy(Player):
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
 
-    # Initialise a member variable that store each of the positions that the enemy can go
-    def getPositionsFromLevel(self, level: list, screenWidth: int, screenHeight: int) -> None:
-        self.__filledPositions: list = []  # list of tuples
-        for y in range(len(level)):
-            for x in range(len(level[y])):
-                # indexes are multiplied by negative 1 beacuse python indexing wraps and so that the bottom of the list has an X position of 0
-                if level[-1 * y][-1 * x] != "0":
-                    self.__filledPositions.append((
-                        int(x * (screenWidth / len(level[0]))), int(y * (screenHeight / len(level)))))
-        # print(self.__availablePositons)
-
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
         self.__find = newFind
-
-    # Is there a platform within a certain horizontal distance from the player?
-    # If so Jump
-    # If not then dont
-    # Takes in platform object as a parameter
-    def conditionalJump(self, object: Object):
-        # TODO: check Y level of Enemy with object Y level
-        if (self.getXPos() in range(object.getXPos() - object.getWidth(), object.getXPos() + object.getWidth())):
-            # Jump
-            print("HERE")
-            self.addVelocity(
-                Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
 
     # This will more the enemy in the direction of the player but is one dimensional and only takes
     def moveTowardsPlayer(self, playerPosition: tuple):
@@ -266,7 +243,6 @@ class Enemy(Player):
 
         # Will check if the enemy should move towards the player in the X direction
         # Calculates the correct direction to move
-        print(self._collisionX)
         if self._collisionX == True:
             # Jump
             self.addVelocity(

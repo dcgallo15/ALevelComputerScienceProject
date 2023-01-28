@@ -80,7 +80,7 @@ class Screen():
                                y * objHeight, color, True))
 
     # For object collision handling
-    def objectCollsion(self, player: Player) -> None:  # VERSION 2.8
+    def objectCollsion(self, player: Player) -> None:
         # Starts from 2 as player and enemy are first 2 objects always
         for i in range(2, len(self.__objects)):
             player.collidesObjectX(self.__objects[i])
