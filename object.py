@@ -75,6 +75,9 @@ class Player(Object):
         for attack in args:
             self.__attacks.append(attack)
 
+    def getFacingRight(self) -> bool:
+        return self.__facingRight
+
     def setFacingRight(self, right: bool) -> None:
         self.__facingRight = right
 
