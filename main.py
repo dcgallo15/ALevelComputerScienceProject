@@ -28,14 +28,21 @@ def main() -> int:
     PL_IDLE0 = pygame.image.load("img/IDLE0.png")
     PL_RUNNINGRIGHT0 = pygame.image.load("img/RUNNINGRIGHT0.png")
     PL_RUNNINGRIGHT1 = pygame.image.load("img/RUNNINGRIGHT1.png")
+    PL_RUNNINGLEFT0 = pygame.image.load("img/RUNNINGLEFT0.png")
+    PL_RUNNINGLEFT1 = pygame.image.load("img/RUNNINGLEFT1.png")
+    PL_ATTACKLEFT0 = pygame.image.load("img/ATTACKLEFT0.png")
+    PL_ATTACKRIGHT0 = pygame.image.load("img/ATTACKRIGHT0.png")
 
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
     player = Player(10, 0, PL_IDLE0, [], 20)
     # player.initAnimStates(state.IDLE, PL_IDLE0)
-    player.initAnimStates(state.RUNNINGLEFT, [PL_IDLE0])
+    player.initAnimStates(state.RUNNINGLEFT, [
+                          PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     player.initAnimStates(state.RUNNINGRIGHT,
                           [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
+    player.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0])
+    player.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0])
     # Attacks initialisation
     player.initAttacks(Attack(state.ATTACKRIGHT, 20, 10))
     # player must be first object attached to the screen
@@ -108,7 +115,15 @@ def main() -> int:
                 # left mouse click
                 if event.button == 1:
                     player.attack(0, enemy)
+                    if player.getFacingRight() == True:
+                        player.setAnimState(state.ATTACKRIGHT)
+                    else:
+                        player.setAnimState(state.ATTACKLEFT)
                     print(enemy.getHealth())
+            if event.type == pygame.MOUSEBUTTONUP:
+                # Left mouse release
+                if event.button == 1:
+                    player.setAnimState(state.IDLE)
 
         # Player Gravity
         # When the player is not stood on ground then there will be a gravity velcoity added
