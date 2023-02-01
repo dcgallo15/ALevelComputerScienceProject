@@ -41,10 +41,11 @@ def main() -> int:
                           PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     player.initAnimStates(state.RUNNINGRIGHT,
                           [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
-    player.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0])
-    player.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0])
+    player.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
+    player.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
     # Attacks initialisation
-    player.initAttacks(Attack(state.ATTACKRIGHT, 20, 10))
+    # This attack will be executed when the player reaches back to it's IDLE state
+    player.initAttacks(Attack(20, 10, 1))
     # player must be first object attached to the screen
     screen.attachObject(player)
 
@@ -114,16 +115,20 @@ def main() -> int:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # left mouse click
                 if event.button == 1:
-                    player.attack(0, enemy)
                     if player.getFacingRight() == True:
                         player.setAnimState(state.ATTACKRIGHT)
                     else:
                         player.setAnimState(state.ATTACKLEFT)
-                    print(enemy.getHealth())
+                    player.setCurrentAttackIndex(0)
+                    player.toggleAttack()
+
             if event.type == pygame.MOUSEBUTTONUP:
                 # Left mouse release
                 if event.button == 1:
                     player.setAnimState(state.IDLE)
+
+        # Attack Handling
+        player.attack(enemy)
 
         # Player Gravity
         # When the player is not stood on ground then there will be a gravity velcoity added

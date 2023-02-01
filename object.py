@@ -71,6 +71,10 @@ class Player(Object):
         self.__health: int = 100
         # This will keep track of horizontal collsions mostily for enemy pathfinding
         self._collisionX: bool = False
+        # This will keep track of if an attack has been triggered
+        self.__isAttacking = False
+        # Keeps track of the attack to be carried out
+        self.__currentAttackIndex = -1
 
     # Takes in all the attacks that the player can perform
     def initAttacks(self, *args: Attack) -> None:
@@ -93,22 +97,42 @@ class Player(Object):
 
     # Will perform the attack move
     # This will check if the player instance passed in will be affected by this attack
-    def attack(self, index: int, player) -> None:
-        currentAttack: Attack = self.__attacks[index]
-        # Check if the player is within vertical range of the object passed in
-        if self.getYPos() in range(player.getYPos(), player.getYPos() + player.getHeight()):
-            if self.__facingRight == True:
-                # Checks if the right side of the player is within attack range of the enemy
-                if self.getXPos() + self.getWidth() in range(player.getXPos(),
-                                                             player.getXPos() + currentAttack.getRange()):
-                    # If it is then subtract the attack's health cost
-                    player.decrementHealth(currentAttack.getHealthCost())
-            else:
-                # Checks if the left side of the player is within attack range of the enemy
-                if currentAttack.getRange() + self.getXPos() in range(player.getXPos() + player.getWidth(),
-                                                                      player.getXPos() + player.getWidth() + currentAttack.getRange()):
-                    player.decrementHealth(currentAttack.getHealthCost())
-        # TODO: take into account the animation
+    def attack(self, player) -> None:
+        # Check if an attack should be carried out
+        if self.__isAttacking == True:
+            # Assigns the current attack
+            currentAttack: Attack = self.__attacks[self.__currentAttackIndex]
+            # Check if animation is in correct state
+            if self.__playerAnimManager.getCounter() == currentAttack.getTriggerIndex():
+                # Check if the player is within vertical range of the object passed in
+                if self.getYPos() in range(player.getYPos(), player.getYPos() + player.getHeight()):
+                    if self.__facingRight == True:
+                        # Checks if the right side of the player is within attack range of the enemy
+                        if self.getXPos() + self.getWidth() in range(player.getXPos(),
+                                                                     player.getXPos() + currentAttack.getRange()):
+                            # If it is then subtract the attack's health cost
+                            player.decrementHealth(
+                                currentAttack.getHealthCost())
+                    else:
+                        # Checks if the left side of the player is within attack range of the enemy
+                        if currentAttack.getRange() + self.getXPos() in range(player.getXPos() + player.getWidth(),
+                                                                              player.getXPos() + player.getWidth() + currentAttack.getRange()):
+                            player.decrementHealth(
+                                currentAttack.getHealthCost())
+                # The attack has been carried out
+                self.toggleAttack()
+                # To track changes in the enemy's health
+                print(player.getHealth())
+
+    def setCurrentAttackIndex(self, index: int) -> None:
+        self.__currentAttackIndex = index
+
+    def toggleAttack(self) -> None:
+        # Will change isAttacking to False when True and True when False
+        self.__isAttacking = not self.__isAttacking
+
+    def getIsAttacking(self) -> bool:
+        return self.__isAttacking
 
     # Animation Manager Methods:
     def initAnimStates(self, state: AnimationState, animations: list) -> None:
@@ -131,6 +155,10 @@ class Player(Object):
 
     def getAnimCounter(self) -> float:
         return self.__playerAnimCounter
+
+    def getAnimIndex(self) -> int:
+        # Returns the index of the list that the animation is on
+        return self.__playerAnimManager.getCounter()
 
     # This method will add another velocity to the end of the list
     def addVelocity(self, vel: Vector) -> None:
@@ -223,7 +251,6 @@ class Player(Object):
         return False
 
 
-# Version 3.1
 class Enemy(Player):
     def __init__(self, xPos: int, yPos: int, sprite, velocities: list, speed: int) -> None:
         super().__init__(xPos, yPos,

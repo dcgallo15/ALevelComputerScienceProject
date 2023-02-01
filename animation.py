@@ -79,3 +79,6 @@ class AnimationManager():
     # This will return a pygame image object
     def getCurrentAnimation(self):
         return self.__currentState[self.__counter]
+
+    def getCounter(self) -> int:
+        return self.__counter
