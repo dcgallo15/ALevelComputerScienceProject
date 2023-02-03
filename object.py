@@ -51,6 +51,7 @@ class Player(Object):
         super().__init__(width, height, xPos, yPos, color, collision)
         self.__speed = speed
         self.__velocities = velocities  # List of Vector objects
+        self._collisionX = False
 
     # This method will add another velocity to the end of the list
     def addVelocity(self, vel: Vector) -> None:

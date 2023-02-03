@@ -24,7 +24,6 @@ def main() -> int:
     player = Player(40, 40, 10, 360, (255, 0, 255), [], 20, True)
     # player must be first object attached to the screen
     enemy = Enemy(40, 40, 600, 360, (255, 0, 0), [], 10, True)
-    enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
     screen.attachObject(player)
     screen.attachObject(enemy)
     screen.parseLevel(level1)
