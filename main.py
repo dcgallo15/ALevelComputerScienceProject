@@ -50,17 +50,16 @@ def main() -> int:
     screen.attachObject(player)
 
     # TODO:
-    # Add proper platform collision
-    # Make a better pathfinding algorithm
-    # Ensure that the sprites are the correct width
     # Finish adding the rest of the animations
     # Add more attacks
 
     # Enemy Setup:
     enemy = Enemy(10, 0, PL_IDLE0, [], 10)
-    # ???
-    #enemy.getPositionsFromLevel(level1, screen.getWidth(), screen.getHeight())
-    # TODO
+    enemy.initAnimStates(state.RUNNINGLEFT, [
+        PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
+    enemy.initAnimStates(state.RUNNINGRIGHT,
+                         [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
+
     screen.attachObject(enemy)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
@@ -177,8 +176,10 @@ def main() -> int:
 
         # Progress the animation every 2 seconds
         player.nextAnimation(2)
+        enemy.nextAnimation(2)
         # Increments the animation timer counter
         player.incrementAnimCounter(deltaTime)
+        enemy.incrementAnimCounter(deltaTime)
 
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()

@@ -253,6 +253,7 @@ class Enemy(Player):
                          sprite, velocities, speed)
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
+        self.__currentAnimState: AnimationState = 0
 
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
@@ -262,6 +263,7 @@ class Enemy(Player):
     # into account the horizontal direction
     # playerPosition = (player.getXpos(), player.getYpos())
     def moveTowardsPlayer(self, playerPosition: tuple):
+        state = AnimationState()
         endPos = (playerPosition[0], playerPosition[1])
         currentPos = (self.getXPos(), self.getYPos())
 
@@ -279,24 +281,38 @@ class Enemy(Player):
             self.addVelocity(
                 Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
             # After the jump has been completed this ensures that another jump is not repeated
+            self.setAnimState(state.IDLE)
+            self.__currentAnimState = state.IDLE
             self._collisionX = False
             return
 
         if xDistance < 0:
             if self.__find == True:
                 self.addVelocity(Vector(self.getSpeed(), pi))
+                if self.__currentAnimState != state.RUNNINGLEFT:
+                    self.setAnimState(state.RUNNINGLEFT)
+                    self.__currentAnimState = state.RUNNINGLEFT
                 return
 
             if self.__find == False:
                 self.addVelocity(Vector(self.getSpeed(),  0))
+                if self.__currentAnimState != state.RUNNINGRIGHT:
+                    self.setAnimState(state.RUNNINGRIGHT)
+                    self.__currentAnimState = state.RUNNINGRIGHT
                 return
 
         else:
             if self.__find == True:
                 self.addVelocity(Vector(self.getSpeed(),  0))
+                if self.__currentAnimState != state.RUNNINGRIGHT:
+                    self.setAnimState(state.RUNNINGRIGHT)
+                    self.__currentAnimState = state.RUNNINGRIGHT
                 return
 
             if self.__find == True:
                 self.addVelocity(Vector(self.getSpeed(), pi))
+                if self.__currentAnimState != state.RUNNINGLEFT:
+                    self.setAnimState(state.RUNNINGLEFT)
+                    self.__currentAnimState = state.RUNNINGLEFT
                 return
         return
