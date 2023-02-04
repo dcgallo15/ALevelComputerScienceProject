@@ -37,7 +37,8 @@ def main() -> int:
     screen = Screen(640, 480)
     player = Player(10, 0, PL_IDLE0, [], 20)
     #player.initAnimStates(state.IDLE, PL_IDLE0)
-    player.initAnimStates(state.RUNNINGLEFT, [PL_IDLE0])
+    player.initAnimStates(state.RUNNINGLEFT, [
+                          PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     player.initAnimStates(state.RUNNINGRIGHT,
                           [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
     player.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])

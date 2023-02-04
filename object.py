@@ -69,6 +69,8 @@ class Player(Object):
         self.__attacks: list = []
         self.__facingRight: bool = True  # This is so that the attack directions are correct
         self.__health: int = 100
+        self.__isAttacking = False
+        self._collisionX: bool = False
 
     # Takes in all the attacks that the player can perform
     def initAttacks(self, *args: Attack) -> None:
