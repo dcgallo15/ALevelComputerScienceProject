@@ -108,11 +108,13 @@ def main() -> int:
                     # Left
                     if event.key == pygame.K_a:
                         keysDown.remove("A")
-                        player.setAnimState(state.IDLE)
+                        if len(keysDown) == 0:
+                            player.setAnimState(state.IDLE)
                     # Right
                     elif event.key == pygame.K_d:
                         keysDown.remove("D")
-                        player.setAnimState(state.IDLE)
+                        if len(keysDown) == 0:
+                            player.setAnimState(state.IDLE)
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
