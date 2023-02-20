@@ -261,10 +261,9 @@ class Enemy(Player):
 
     # This will more the enemy in the direction of the player but is one dimensional and only takes
     # into account the horizontal direction
-    # playerPosition = (player.getXpos(), player.getYpos())
-    def moveTowardsPlayer(self, playerPosition: tuple):
+    def moveTowardsPlayer(self, player: Player):
         state = AnimationState()
-        endPos = (playerPosition[0], playerPosition[1])
+        endPos = (player.getXPos(), player.getYPos())
         currentPos = (self.getXPos(), self.getYPos())
 
         # This takes into account of the X direction
@@ -292,6 +291,7 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGLEFT:
                     self.setAnimState(state.RUNNINGLEFT)
                     self.__currentAnimState = state.RUNNINGLEFT
+                    self.__facingRight = False
                 return
 
             if self.__find == False:
@@ -299,6 +299,7 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGRIGHT:
                     self.setAnimState(state.RUNNINGRIGHT)
                     self.__currentAnimState = state.RUNNINGRIGHT
+                    self.__facingRight = True
                 return
 
         else:
@@ -307,6 +308,7 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGRIGHT:
                     self.setAnimState(state.RUNNINGRIGHT)
                     self.__currentAnimState = state.RUNNINGRIGHT
+                    self.__facingRight = True
                 return
 
             if self.__find == True:
@@ -314,5 +316,9 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGLEFT:
                     self.setAnimState(state.RUNNINGLEFT)
                     self.__currentAnimState = state.RUNNINGLEFT
+                    self.__facingRight = False
                 return
         return
+
+    def attackPlayer(self, player: Player):
+        self.attack(player)

@@ -59,6 +59,8 @@ def main() -> int:
         PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     enemy.initAnimStates(state.RUNNINGRIGHT,
                          [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
+    enemy.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
+    enemy.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
 
     screen.attachObject(enemy)
     screen.parseLevel(level1)
@@ -170,7 +172,8 @@ def main() -> int:
             # Gravity Velocity
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
-        enemy.moveTowardsPlayer((player.getXPos(), player.getYPos()))
+        enemy.moveTowardsPlayer(player)
+        enemy.attackPlayer(player)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
