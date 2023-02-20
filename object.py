@@ -109,16 +109,19 @@ class Player(Object):
                             # If it is then subtract the attack's health cost
                             player.decrementHealth(
                                 currentAttack.getHealthCost())
+                        # To track changes in health
+                        print(player.getHealth())
                     else:
                         # Checks if the left side of the player is within attack range of the enemy
-                        if currentAttack.getRange() + self.getXPos() in range(player.getXPos() + player.getWidth(),
-                                                                              player.getXPos() + player.getWidth() + currentAttack.getRange()):
+                        # Bug fix here that ensures range is properly calculated
+                        if self.getXPos() - currentAttack.getRange() in range(player.getXPos(),
+                                                                              player.getXPos() + player.getWidth()):
                             player.decrementHealth(
                                 currentAttack.getHealthCost())
+                    # To track changes in health
+                    print(player.getHealth())
                 # The attack has been carried out
                 self.toggleAttack()
-                # To track changes in the enemy's health
-                print(player.getHealth())
 
     def setCurrentAttackIndex(self, index: int) -> None:
         self.__currentAttackIndex = index
@@ -129,6 +132,9 @@ class Player(Object):
 
     def getIsAttacking(self) -> bool:
         return self.__isAttacking
+
+    def getCurrentAttack(self) -> Attack:
+        return self.__attacks[self.__currentAttackIndex]
 
     # Animation Manager Methods:
     def initAnimStates(self, state: AnimationState, animations: list) -> None:
@@ -254,6 +260,7 @@ class Enemy(Player):
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
         self.__currentAnimState: AnimationState = 0
+        self.__attackTimer: float = 0
 
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
@@ -268,9 +275,17 @@ class Enemy(Player):
 
         # This takes into account of the X direction
         xDistance = ((endPos[0] - currentPos[0]))
+
+        # Doesn't move when attacking or animations cancelled
+        if self.getIsAttacking() == True:
+            return
+
         # This ensures that the enemy does not walk into the player
         # However, this does not ensure that the player cannot walk into the enemy
         if sqrt(xDistance ** 2) < self.getWidth():
+            if self.__currentAnimState != state.IDLE:  # Resets Animation state when next to the player
+                self.setAnimState(state.IDLE)
+            self.__currentAnimState = state.IDLE
             return
 
         # Will check if the enemy should move towards the player in the X direction
@@ -280,7 +295,8 @@ class Enemy(Player):
             self.addVelocity(
                 Vector(self.getSpeed() * self.getSpeed(), 3 * pi / 2))
             # After the jump has been completed this ensures that another jump is not repeated
-            self.setAnimState(state.IDLE)
+            if self.__currentAnimState != state.IDLE:
+                self.setAnimState(state.IDLE)
             self.__currentAnimState = state.IDLE
             self._collisionX = False
             return
@@ -291,7 +307,7 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGLEFT:
                     self.setAnimState(state.RUNNINGLEFT)
                     self.__currentAnimState = state.RUNNINGLEFT
-                    self.__facingRight = False
+                self.setFacingRight(False)
                 return
 
             if self.__find == False:
@@ -299,7 +315,7 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGRIGHT:
                     self.setAnimState(state.RUNNINGRIGHT)
                     self.__currentAnimState = state.RUNNINGRIGHT
-                    self.__facingRight = True
+                self.setFacingRight(True)
                 return
 
         else:
@@ -308,17 +324,40 @@ class Enemy(Player):
                 if self.__currentAnimState != state.RUNNINGRIGHT:
                     self.setAnimState(state.RUNNINGRIGHT)
                     self.__currentAnimState = state.RUNNINGRIGHT
-                    self.__facingRight = True
+                self.setFacingRight(True)
                 return
 
-            if self.__find == True:
+            # Bug fix
+            if self.__find == False:
                 self.addVelocity(Vector(self.getSpeed(), pi))
                 if self.__currentAnimState != state.RUNNINGLEFT:
                     self.setAnimState(state.RUNNINGLEFT)
                     self.__currentAnimState = state.RUNNINGLEFT
-                    self.__facingRight = False
+                self.setFacingRight(False)
                 return
         return
 
-    def attackPlayer(self, player: Player):
-        self.attack(player)
+    def __selectAnimationState(self):
+        state = AnimationState()
+        if self.getFacingRight() == False:
+            if self.__currentAnimState != state.ATTACKLEFT:
+                self.setAnimState(state.ATTACKLEFT)
+                self.__currentAnimState = state.ATTACKLEFT
+        else:
+            if self.__currentAnimState != state.ATTACKRIGHT:
+                self.setAnimState(state.ATTACKRIGHT)
+                self.__currentAnimState = state.ATTACKRIGHT
+
+    def attackPlayer(self, player: Player, deltaTime: float):
+        # Selects the attack:
+        self.setCurrentAttackIndex(0)
+
+        if self.getIsAttacking() == True:
+            self.attack(player)  # is attacking is reset here
+
+        else:  # Determining whether to attack
+            # An attack will only be attempted when in range of player and find is true
+            if sqrt((player.getXPos() - self.getXPos()) ** 2) < self.getCurrentAttack().getRange() + self.getWidth():
+                if self.__find == True:
+                    self.toggleAttack()
+                    self.__selectAnimationState()

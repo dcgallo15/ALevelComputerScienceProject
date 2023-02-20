@@ -54,13 +54,14 @@ def main() -> int:
     # Add more attacks
 
     # Enemy Setup:
-    enemy = Enemy(10, 0, PL_IDLE0, [], 10)
+    enemy = Enemy(400, 0, PL_IDLE0, [], 10)
     enemy.initAnimStates(state.RUNNINGLEFT, [
         PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     enemy.initAnimStates(state.RUNNINGRIGHT,
                          [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
     enemy.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
     enemy.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
+    enemy.initAttacks(Attack(20, 10, 1))
 
     screen.attachObject(enemy)
     screen.parseLevel(level1)
@@ -173,7 +174,7 @@ def main() -> int:
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
         enemy.moveTowardsPlayer(player)
-        enemy.attackPlayer(player)
+        enemy.attackPlayer(player, deltaTime)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
