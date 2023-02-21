@@ -1,7 +1,7 @@
 from vector import Vector
 from math import atan, tan, sqrt, pi
 from animation import AnimationState, AnimationManager
-from attack import Attack
+from attack import Attack, BlockState
 
 
 class Object():
@@ -70,6 +70,8 @@ class Player(Object):
         self.__facingRight: bool = True  # This is so that the attack directions are correct
         self.__health: int = 100
         self.__isAttacking = False
+        # Protected as it will be used in enemy class
+        self._block: BlockState = BlockState().NONE
         self._collisionX: bool = False
 
     # Takes in all the attacks that the player can perform
@@ -91,6 +93,12 @@ class Player(Object):
     def getHealth(self) -> int:
         return self.__health
 
+    def setBlock(self, blockState: BlockState) -> None:
+        self.__block = blockState
+
+    def resetBlock(self) -> None:
+        self.__block = BlockState().NONE
+
     # Will perform the attack move
     # This will check if the player instance passed in will be affected by this attack
     def attack(self, player) -> None:
@@ -98,6 +106,9 @@ class Player(Object):
         if self.__isAttacking == True:
             # Assigns the current attack
             currentAttack: Attack = self.__attacks[self.__currentAttackIndex]
+            if self.__block == currentAttack.getAttackPoint():
+                print("ATTACK BLOCKED")
+                return
             # Check if animation is in correct state
             if self.__playerAnimManager.getCounter() == currentAttack.getTriggerIndex():
                 # Check if the player is within vertical range of the object passed in

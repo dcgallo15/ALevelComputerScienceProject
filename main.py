@@ -106,6 +106,17 @@ def main() -> int:
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.append("S")
+
+                    # BLOCKS
+                    elif event.key == pygame.K_c:
+                        player.setBlock(blockState.TOP)
+
+                    elif event.key == pygame.K_v:
+                        player.setBlock(blockState.MIDDLE)
+
+                    elif event.key == pygame.K_b:
+                        player.setBlock(blockState.BOTTOM)
+
                 # Keyup
                 elif event.type == pygame.KEYUP:
                     # Left
@@ -121,6 +132,10 @@ def main() -> int:
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
+
+                    # Block reset
+                    elif event.key == pygame.K_c or event.key == pygame.K_v or event.key == pygame.K_b:
+                        player.resetBlock()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # left mouse click

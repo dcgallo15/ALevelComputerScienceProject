@@ -6,6 +6,12 @@ class AnimationState():
         self.RUNNINGRIGHT = 3
         self.ATTACKLEFT = 4
         self.ATTACKRIGHT = 5
+        self.BLOCKDOWNLEFT = 6
+        self.BLOCKDOWNRIGHT = 7
+        self.BLOCKMIDDLELEFT = 8
+        self.BLOCKMIDDLERIGHT = 9
+        self.BLOCKTOPLEFT = 10
+        self.BLOCKTOPRIGHT = 11
 
 
 class AnimationManager():
@@ -19,6 +25,12 @@ class AnimationManager():
         self.__runningRight = []
         self.__attackLeft = []
         self.__attackRight = []
+        self.__blockDownLeft = []
+        self.__blockDownRight = []
+        self.__blockMiddleLeft = []
+        self.__blockMiddleRight = []
+        self.__blockTopLeft = []
+        self.__blockTopRight = []
 
     def setupStates(self, animState: int, animations: list):
         if animState == self.__state.IDLE:
@@ -41,6 +53,30 @@ class AnimationManager():
             for anim in animations:
                 self.__attackRight.append(anim)
 
+        elif animState == self.__state.BLOCKDOWNLEFT:
+            for anim in animations:
+                self.__blockDownLeft.append(anim)
+
+        elif animState == self.__state.BLOCKDOWNRIGHT:
+            for anim in animations:
+                self.__blockDownRight.append(anim)
+
+        elif animState == self.__state.BLOCKMIDDLELEFT:
+            for anim in animations:
+                self.__blockMiddleLeft.append(anim)
+
+        elif animState == self.__state.BLOCKMIDDLERIGHT:
+            for anim in animations:
+                self.__blockMiddleRight.append(anim)
+
+        elif animState == self.__state.BLOCKTOPLEFT:
+            for anim in animations:
+                self.__blockTopLeft.append(anim)
+
+        elif animState == self.__state.BLOCKTOPRIGHT:
+            for anim in animations:
+                self.__blockTopRight.append(anim)
+
         else:
             print("UNRECOGNISED ANIMATION STATE")
 
@@ -60,6 +96,24 @@ class AnimationManager():
 
         elif animState == self.__state.ATTACKRIGHT:
             self.__currentState = self.__attackRight
+
+        elif animState == self.__state.BLOCKDOWNLEFT:
+            self.__currentState = self.__blockDownLeft
+
+        elif animState == self.__state.BLOCKDOWNRIGHT:
+            self.__currentState = self.__blockDownRight
+
+        elif animState == self.__state.BLOCKMIDDLELEFT:
+            self.__currentState = self.__blockMiddleLeft
+
+        elif animState == self.__state.BLOCKMIDDLERIGHT:
+            self.__currentState = self.__blockMiddleRight
+
+        elif animState == self.__state.BLOCKTOPLEFT:
+            self.__currentState = self.__blockTopLeft
+
+        elif animState == self.__state.BLOCKTOPRIGHT:
+            self.__currentState = self.__blockTopRight
 
         else:
             print("UNRECOGNISED ANIMATION STATE")

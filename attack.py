@@ -7,6 +7,7 @@ class BlockState():
         self.TOP = 3
         self.MIDDLE = 2
         self.BOTTOM = 1
+        self.NONE = 0
 
 
 class Attack():
