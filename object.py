@@ -101,7 +101,7 @@ class Player(Object):
             # Check if animation is in correct state
             if self.__playerAnimManager.getCounter() == currentAttack.getTriggerIndex():
                 # Check if the player is within vertical range of the object passed in
-                if self.getYPos() in range(player.getYPos(), player.getYPos() + player.getHeight()):
+                if self.getYPos() in range(player.getYPos() - player.getHeight(), player.getYPos()):
                     if self.__facingRight == True:
                         # Checks if the right side of the player is within attack range of the enemy
                         if self.getXPos() + self.getWidth() in range(player.getXPos(),
@@ -347,7 +347,7 @@ class Enemy(Player):
                 self.setAnimState(state.ATTACKRIGHT)
                 self.__currentAnimState = state.ATTACKRIGHT
 
-    def attackPlayer(self, player: Player, deltaTime: float):
+    def attackPlayer(self, player: Player):
         # Selects the attack:
         self.setCurrentAttackIndex(0)
 
@@ -356,7 +356,15 @@ class Enemy(Player):
 
         else:  # Determining whether to attack
             # An attack will only be attempted when in range of player and find is true
-            if sqrt((player.getXPos() - self.getXPos()) ** 2) < self.getCurrentAttack().getRange() + self.getWidth():
-                if self.__find == True:
-                    self.toggleAttack()
-                    self.__selectAnimationState()
+            if self.getFacingRight() == True:
+                # Left side of player and right side of enemy
+                if sqrt((player.getXPos() - (self.getXPos() + self.getWidth())) ** 2) < self.getCurrentAttack().getRange() + self.getWidth():
+                    if self.__find == True:
+                        self.toggleAttack()
+                        self.__selectAnimationState()
+            else:
+                # Right side of player and left side of enemy
+                if sqrt(((player.getXPos() + player.getWidth()) - self.getXPos()) ** 2) < self.getCurrentAttack().getRange():
+                    if self.__find == True:
+                        self.toggleAttack()
+                        self.__selectAnimationState()
