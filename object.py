@@ -260,6 +260,7 @@ class Enemy(Player):
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
         self.__currentAnimState: AnimationState = 0
+        self.__attackTimer: float = 0
 
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
@@ -347,12 +348,15 @@ class Enemy(Player):
                 self.setAnimState(state.ATTACKRIGHT)
                 self.__currentAnimState = state.ATTACKRIGHT
 
-    def attackPlayer(self, player: Player):
+    def attackPlayer(self, player: Player, deltatime: float):
+        self.__attackTimer += deltatime
         # Selects the attack:
         self.setCurrentAttackIndex(0)
 
         if self.getIsAttacking() == True:
-            self.attack(player)  # is attacking is reset here
+            if self.__attackTimer > 0.5:  # Max 2 attacks per second
+                self.attack(player)  # is attacking is reset here
+                self.__attackTimer = 0
 
         else:  # Determining whether to attack
             # An attack will only be attempted when in range of player and find is true

@@ -2,7 +2,7 @@ import pygame
 from screen import Screen
 from object import Object, Player, Enemy
 from animation import AnimationState, AnimationManager
-from attack import Attack
+from attack import Attack, BlockState
 from vector import Vector
 from math import pi
 
@@ -15,6 +15,7 @@ def main() -> int:
     # Main variables initialisation
     gameRunning: bool = True
     state = AnimationState()
+    blockState = BlockState()
     keysDown = []  # keeps track of the keys that are pressed down
 
     # this will be used later and be controlled by the menu to ensure that
@@ -45,7 +46,7 @@ def main() -> int:
     player.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
     # Attacks initialisation
     # This attack will be executed when the player reaches back to it's IDLE state
-    player.initAttacks(Attack(20, 10, 1))
+    player.initAttacks(Attack(20, 10, blockState.MIDDLE, 1))
     # player must be first object attached to the screen
     screen.attachObject(player)
 
@@ -61,7 +62,7 @@ def main() -> int:
                          [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
     enemy.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
     enemy.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
-    enemy.initAttacks(Attack(20, 10, 0))
+    enemy.initAttacks(Attack(20, 10, blockState.MIDDLE, 0))
 
     screen.attachObject(enemy)
     screen.parseLevel(level1)
@@ -174,7 +175,7 @@ def main() -> int:
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
         enemy.moveTowardsPlayer(player)
-        enemy.attackPlayer(player)
+        enemy.attackPlayer(player, deltaTime)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
