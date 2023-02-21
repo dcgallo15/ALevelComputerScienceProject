@@ -260,7 +260,6 @@ class Enemy(Player):
         # This will control if the enemy should find the player or avoid them
         self.__find: bool = True
         self.__currentAnimState: AnimationState = 0
-        self.__attackTimer: float = 0
 
     # Will control wether the enemy attempts to find the player or not
     def setFind(self, newFind: bool) -> None:
