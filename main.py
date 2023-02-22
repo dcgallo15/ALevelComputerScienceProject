@@ -33,6 +33,12 @@ def main() -> int:
     PL_RUNNINGLEFT1 = pygame.image.load("img/RUNNINGLEFT1.png")
     PL_ATTACKLEFT0 = pygame.image.load("img/ATTACKLEFT0.png")
     PL_ATTACKRIGHT0 = pygame.image.load("img/ATTACKRIGHT0.png")
+    PL_BLOCKDOWNLEFT = pygame.image.load("img/BLOCKDOWNLEFT.png")
+    PL_BLOCKDOWNRIGHT = pygame.image.load("img/BLOCKDOWNRIGHT.png")
+    PL_BLOCKMIDDLELEFT = pygame.image.load("img/BLOCKMIDDLELEFT.png")
+    PL_BLOCKMIDDLERIGHT = pygame.image.load("img/BLOCKMIDDLERIGHT.png")
+    PL_BLOCKTOPLEFT = pygame.image.load("img/BLOCKTOPLEFT.png")
+    PL_BLOCKTOPRIGHT = pygame.image.load("img/BLOCKTOPRIGHT.png")
 
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
@@ -44,6 +50,12 @@ def main() -> int:
                           [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
     player.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
     player.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
+    player.initAnimStates(state.BLOCKDOWNLEFT, [PL_BLOCKDOWNLEFT])
+    player.initAnimStates(state.BLOCKDOWNRIGHT, [PL_BLOCKDOWNRIGHT])
+    player.initAnimStates(state.BLOCKMIDDLELEFT, [PL_BLOCKMIDDLELEFT])
+    player.initAnimStates(state.BLOCKMIDDLERIGHT, [PL_BLOCKMIDDLERIGHT])
+    player.initAnimStates(state.BLOCKTOPLEFT, [PL_BLOCKTOPLEFT])
+    player.initAnimStates(state.BLOCKTOPRIGHT, [PL_BLOCKTOPRIGHT])
     # Attacks initialisation
     # This attack will be executed when the player reaches back to it's IDLE state
     player.initAttacks(Attack(20, 10, blockState.MIDDLE, 1))
@@ -110,12 +122,24 @@ def main() -> int:
                     # BLOCKS
                     elif event.key == pygame.K_c:
                         player.setBlock(blockState.TOP)
+                        if player.getFacingRight() == False:
+                            player.setAnimState(state.BLOCKTOPLEFT)
+                        else:
+                            player.setAnimState(state.BLOCKTOPRIGHT)
 
                     elif event.key == pygame.K_v:
                         player.setBlock(blockState.MIDDLE)
+                        if player.getFacingRight() == False:
+                            player.setAnimState(state.BLOCKMIDDLELEFT)
+                        else:
+                            player.setAnimState(state.BLOCKMIDDLERIGHT)
 
                     elif event.key == pygame.K_b:
                         player.setBlock(blockState.BOTTOM)
+                        if player.getFacingRight() == False:
+                            player.setAnimState(state.BLOCKDOWNLEFT)
+                        else:
+                            player.setAnimState(state.BLOCKDOWNRIGHT)
 
                 # Keyup
                 elif event.type == pygame.KEYUP:
@@ -136,6 +160,7 @@ def main() -> int:
                     # Block reset
                     elif event.key == pygame.K_c or event.key == pygame.K_v or event.key == pygame.K_b:
                         player.resetBlock()
+                        player.setAnimState(state.IDLE)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # left mouse click
@@ -154,6 +179,10 @@ def main() -> int:
 
         # Attack Handling
         player.attack(enemy)
+
+        # Resets the state when the block time has run out
+        if player.getBlockTimer() >= player.getBlockTimeLimit():
+            player.setAnimState(state.IDLE)
 
         # Player Gravity
         # When the player is not stood on ground then there will be a gravity velcoity added
@@ -200,6 +229,9 @@ def main() -> int:
         # Increments the animation timer counter
         player.incrementAnimCounter(deltaTime)
         enemy.incrementAnimCounter(deltaTime)
+        # Increments the block timer
+        player.incrementBlockTimer(deltaTime)
+        enemy.incrementBlockTimer(deltaTime)
 
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()

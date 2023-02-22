@@ -70,8 +70,10 @@ class Player(Object):
         self.__facingRight: bool = True  # This is so that the attack directions are correct
         self.__health: int = 100
         self.__isAttacking = False
-        # Protected as it will be used in enemy class
-        self._block: BlockState = BlockState().NONE
+        self.__block: BlockState = BlockState().NONE
+        self.__blockTimer: float = 0
+        self.__blockTimeLimit: float = 10
+        # Protected:
         self._collisionX: bool = False
 
     # Takes in all the attacks that the player can perform
@@ -93,8 +95,23 @@ class Player(Object):
     def getHealth(self) -> int:
         return self.__health
 
+    def getBlock(self) -> BlockState:
+        return self.__block
+
     def setBlock(self, blockState: BlockState) -> None:
         self.__block = blockState
+
+    def incrementBlockTimer(self, deltaTime: float) -> None:
+        if self.__block == BlockState().NONE and self.__blockTimer > 0:
+            self.__blockTimer -= deltaTime  # When not blocking the timer increases
+        elif self.__blockTimer < self.__blockTimeLimit:
+            self.__blockTimer += deltaTime
+
+    def getBlockTimer(self) -> float:
+        return self.__blockTimer
+
+    def getBlockTimeLimit(self) -> float:
+        return self.__blockTimeLimit
 
     def resetBlock(self) -> None:
         self.__block = BlockState().NONE
@@ -106,7 +123,7 @@ class Player(Object):
         if self.__isAttacking == True:
             # Assigns the current attack
             currentAttack: Attack = self.__attacks[self.__currentAttackIndex]
-            if self.__block == currentAttack.getAttackPoint():
+            if player.getBlock() == currentAttack.getAttackPoint() and player.getBlockTimer() < player.getBlockTimeLimit():
                 print("ATTACK BLOCKED")
                 return
             # Check if animation is in correct state
