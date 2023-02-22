@@ -40,6 +40,22 @@ def main() -> int:
     PL_BLOCKTOPLEFT = pygame.image.load("img/BLOCKTOPLEFT.png")
     PL_BLOCKTOPRIGHT = pygame.image.load("img/BLOCKTOPRIGHT.png")
 
+    playerAttacks = [
+        Attack(20, 10, blockState.MIDDLE, 1),  # Basic attack
+        Attack(20, 10, blockState.TOP, 1),  # Top attack
+        Attack(20, 10, blockState.BOTTOM, 1),  # Bottom attack
+        Attack(30, 5, blockState.MIDDLE, 1),  # Long range lower damage
+        Attack(15, 15, blockState.MIDDLE, 1),  # Short range higher damage
+    ]
+
+    enemyAttacks = [
+        Attack(20, 10, blockState.MIDDLE, 0),  # Basic attack
+        Attack(20, 10, blockState.TOP, 0),  # Top attack
+        Attack(20, 10, blockState.BOTTOM, 0),  # Bottom attack
+        Attack(30, 5, blockState.MIDDLE, 0),  # Long range lower damage
+        Attack(15, 15, blockState.MIDDLE, 0),  # Short range higher damage
+    ]
+
     # basic width and height values are passed in these will be changed later
     screen = Screen(640, 480)
     player = Player(10, 0, PL_IDLE0, [], 20)
@@ -57,8 +73,8 @@ def main() -> int:
     player.initAnimStates(state.BLOCKTOPLEFT, [PL_BLOCKTOPLEFT])
     player.initAnimStates(state.BLOCKTOPRIGHT, [PL_BLOCKTOPRIGHT])
     # Attacks initialisation
-    # This attack will be executed when the player reaches back to it's IDLE state
-    player.initAttacks(Attack(20, 10, blockState.MIDDLE, 1))
+    for attack in playerAttacks:
+        player.initAttacks(attack)
     # player must be first object attached to the screen
     screen.attachObject(player)
 
@@ -74,7 +90,8 @@ def main() -> int:
                          [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
     enemy.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
     enemy.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
-    enemy.initAttacks(Attack(20, 10, blockState.MIDDLE, 0))
+    for attack in enemyAttacks:
+        enemy.initAttacks(attack)
 
     screen.attachObject(enemy)
     screen.parseLevel(level1)
@@ -115,6 +132,7 @@ def main() -> int:
                         if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == True:
                             player.addVelocity(
                                 Vector(player.getSpeed() * player.getSpeed(), 3 * pi / 2))
+                        keysDown.append("W")
                     # Down
                     elif event.key == pygame.K_s:
                         keysDown.append("S")
@@ -157,6 +175,9 @@ def main() -> int:
                     elif event.key == pygame.K_s:
                         keysDown.remove("S")
 
+                    elif event.key == pygame.K_w:
+                        keysDown.remove("W")
+
                     # Block reset
                     elif event.key == pygame.K_c or event.key == pygame.K_v or event.key == pygame.K_b:
                         player.resetBlock()
@@ -169,7 +190,22 @@ def main() -> int:
                         player.setAnimState(state.ATTACKRIGHT)
                     else:
                         player.setAnimState(state.ATTACKLEFT)
-                    player.setCurrentAttackIndex(0)
+                    if "W" in keysDown:  # Top attack
+                        player.setCurrentAttackIndex(1)
+                    elif "S" in keysDown:  # Bottom attack
+                        player.setCurrentAttackIndex(2)
+                    else:
+                        player.setCurrentAttackIndex(0)
+                    player.toggleAttack()
+
+                # Middle mouse button
+                elif event.button == 2:
+                    player.setCurrentAttackIndex(2)
+                    player.toggleAttack()
+
+                # Right mouse click
+                elif event.button == 3:
+                    player.setCurrentAttackIndex(3)  # Long range attack
                     player.toggleAttack()
 
             if event.type == pygame.MOUSEBUTTONUP:
