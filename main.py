@@ -49,11 +49,11 @@ def main() -> int:
     ]
 
     enemyAttacks = [
-        Attack(20, 10, blockState.MIDDLE, 0),  # Basic attack
-        Attack(20, 10, blockState.TOP, 0),  # Top attack
-        Attack(20, 10, blockState.BOTTOM, 0),  # Bottom attack
-        Attack(30, 5, blockState.MIDDLE, 0),  # Long range lower damage
-        Attack(15, 15, blockState.MIDDLE, 0),  # Short range higher damage
+        Attack(20, 10, blockState.MIDDLE, 1),  # Basic attack
+        Attack(20, 10, blockState.TOP, 1),  # Top attack
+        Attack(20, 10, blockState.BOTTOM, 1),  # Bottom attack
+        Attack(30, 5, blockState.MIDDLE, 1),  # Long range lower damage
+        Attack(15, 15, blockState.MIDDLE, 1),  # Short range higher damage
     ]
 
     # basic width and height values are passed in these will be changed later
@@ -214,7 +214,8 @@ def main() -> int:
                     player.setAnimState(state.IDLE)
 
         # Attack Handling
-        player.attack(enemy)
+        if player.attack(enemy) == True:
+            enemy.setIncrementRecentHitTimer()
 
         # Resets the state when the block time has run out
         if player.getBlockTimer() >= player.getBlockTimeLimit():
@@ -255,7 +256,8 @@ def main() -> int:
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
         enemy.moveTowardsPlayer(player)
-        enemy.attackPlayer(player, deltaTime)
+        # TODO: instead of blockState.NONE this should be the player's previous attack
+        enemy.attackPlayer(player, deltaTime, blockState.NONE)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
