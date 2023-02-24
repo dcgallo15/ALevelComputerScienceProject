@@ -184,12 +184,12 @@ def main() -> int:
                         player.setAnimState(state.IDLE)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                if player.getFacingRight() == True:
+                    player.setAnimState(state.ATTACKRIGHT)
+                else:
+                    player.setAnimState(state.ATTACKLEFT)
                 # left mouse click
                 if event.button == 1:
-                    if player.getFacingRight() == True:
-                        player.setAnimState(state.ATTACKRIGHT)
-                    else:
-                        player.setAnimState(state.ATTACKLEFT)
                     if "W" in keysDown:  # Top attack
                         player.setCurrentAttackIndex(1)
                     elif "S" in keysDown:  # Bottom attack
