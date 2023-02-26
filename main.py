@@ -50,11 +50,11 @@ def main() -> int:
     ]
 
     enemyAttacks = [
-        Attack(20, 10, blockState.MIDDLE, 1),  # Basic attack
-        Attack(20, 10, blockState.TOP, 1),  # Top attack
-        Attack(20, 10, blockState.BOTTOM, 1),  # Bottom attack
-        Attack(30, 5, blockState.MIDDLE, 1),  # Long range lower damage
-        Attack(15, 15, blockState.MIDDLE, 1),  # Short range higher damage
+        Attack(20, 10, blockState.MIDDLE, 2),  # Basic attack
+        Attack(20, 10, blockState.TOP, 2),  # Top attack
+        Attack(20, 10, blockState.BOTTOM, 2),  # Bottom attack
+        Attack(30, 5, blockState.MIDDLE, 2),  # Long range lower damage
+        Attack(15, 15, blockState.MIDDLE, 2),  # Short range higher damage
     ]
 
     # basic width and height values are passed in these will be changed later
@@ -89,8 +89,10 @@ def main() -> int:
         PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     enemy.initAnimStates(state.RUNNINGRIGHT,
                          [PL_RUNNINGRIGHT0, PL_RUNNINGRIGHT1])
-    enemy.initAnimStates(state.ATTACKLEFT, [PL_ATTACKLEFT0, PL_IDLE0])
-    enemy.initAnimStates(state.ATTACKRIGHT, [PL_ATTACKRIGHT0, PL_IDLE0])
+    enemy.initAnimStates(state.ATTACKLEFT, [
+                         PL_ATTACKLEFT0, PL_IDLE0, PL_ATTACKLEFT0])
+    enemy.initAnimStates(state.ATTACKRIGHT, [
+                         PL_ATTACKRIGHT0, PL_IDLE0, PL_ATTACKRIGHT0])
     for attack in enemyAttacks:
         enemy.initAttacks(attack)
 
@@ -99,6 +101,10 @@ def main() -> int:
     clock = pygame.time.Clock()
 
     playerHealthBar = horizontalBar(100, 20, 30, 0, (255, 0, 0))
+    enemyHealthBar = horizontalBar(100, 20, 300, 0, (255, 0, 0))
+
+    playerBlockBar = horizontalBar(100, 20, 30, 20, (0, 0, 255), 100)
+    enemyBlockBar = horizontalBar(100, 20, 300, 20, (0, 0, 255))
 
     # This will loop will run throughout the playing of the level
     while gameRunning == True:
@@ -278,7 +284,15 @@ def main() -> int:
         enemy.resetVelocities()
         # Render UI elements
         playerHealthBar.setPercent(player.getHealth())
+        enemyHealthBar.setPercent(enemy.getHealth())
+        # FIXME:
+        playerBlockBar.setPercent(int(
+            100 * (player.getBlockTimeLimit() // (player.getBlockTimer() + 0.0001))))
+        enemyBlockBar.setPercent(100)
         playerHealthBar.render(screen.getPygameScreen())
+        enemyHealthBar.render(screen.getPygameScreen())
+        playerBlockBar.render(screen.getPygameScreen())
+        enemyBlockBar.render(screen.getPygameScreen())
         # Renders the attached objects
         screen.render()
         # Clears the screen

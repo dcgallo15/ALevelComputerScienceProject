@@ -490,17 +490,20 @@ class Enemy(Player):
 
                 # Find is false so no attack but is within range of player so must block
                 if self.__find == False:
-                    # Should always be True
-                    if player.getCurrentAttack().getAttackPoint() != BlockState().NONE:
-                        # Will always execute for current attacks
-                        self.setBlock(
-                            player.getCurrentAttack().getAttackPoint())
-                    return  # No attack if find is false so return
+                    try:  # For when player isn't attacking
+                        # Should always be True
+                        if player.getCurrentAttack().getAttackPoint() != BlockState().NONE:
+                            # Will always execute for current attacks
+                            self.setBlock(
+                                player.getCurrentAttack().getAttackPoint())
+                        return  # No attack if find is false so return
+                    except:
+                        self.setBlock(BlockState().MIDDLE)
+                    return
 
                 if self.__attackTimer > 5:  # To ensure attacks dont occur too frequently
                     if self.getIsAttacking() == False:
                         self.toggleAttack()  # Set attacking to true
-                    print(self.__attackTimer)
                     self.__selectAttackAnimationState()  # Start animation execution
                     self.__attackTimer = 0  # Reset timer
 
@@ -512,7 +515,7 @@ class Enemy(Player):
                 print("Player health: ", player.getHealth())
                 self.toggleAttack()  # Sets 'isAttacking' back to False
                 # Resets animation after attack is complete
-                self.setAnimState(AnimationState().IDLE)
+                # self.setAnimState(AnimationState().IDLE)
             self.__attackTimer = 0  # Keeps timer at 0 while animation is being executed
 
 

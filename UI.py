@@ -18,6 +18,8 @@ class horizontalBar():
     # NOTE: this must ba called before 'screen.render()'
     def render(self, screen) -> None:
         amountToBeRendered = len(self.__objList) * (self.__percent / 100)
+        if amountToBeRendered > len(self.__objList):
+            amountToBeRendered = len(self.__objList)
         for i in range(int(amountToBeRendered)):
             obj = self.__objList[i]
             pygame.draw.rect(screen, obj.getColor(),
