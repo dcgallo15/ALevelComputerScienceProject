@@ -123,6 +123,7 @@ class Player(Object):
     # Will perform the attack move
     # This will check if the player instance passed in will be affected by this attack
     def attack(self, player) -> bool:
+        retVal: bool = False
         # Check if an attack should be carried out
         if self.getIsAttacking() == True:
             # Assigns the current attack
@@ -130,11 +131,12 @@ class Player(Object):
                 self.getCurrentAttackIndex()]
             if player.getBlock() == currentAttack.getAttackPoint() and player.getBlockTimer() < player.getBlockTimeLimit():
                 print("ATTACK BLOCKED")
+                self.toggleAttack()
                 return False
             # Check if animation is in correct state
             if self.__playerAnimManager.getCounter() == currentAttack.getTriggerIndex():
                 # Check if the player is within vertical range of the object passed in
-                if self.getYPos() in range(player.getYPos() - player.getHeight(), player.getYPos()):
+                if self.getYPos() in range(player.getYPos(), player.getYPos() + player.getHeight()):
                     if self.__facingRight == True:
                         # Checks if the right side of the player is within attack range of the enemy
                         if self.getXPos() + self.getWidth() in range(player.getXPos(),
@@ -143,8 +145,7 @@ class Player(Object):
                             player.decrementHealth(
                                 currentAttack.getHealthCost())
                             # To track changes in health
-                            print(player.getHealth())
-                            return True
+                            retVal = True
                     else:
                         # Checks if the left side of the player is within attack range of the enemy
                         # Bug fix here that ensures range is properly calculated
@@ -152,11 +153,11 @@ class Player(Object):
                                                                               player.getXPos() + player.getWidth()):
                             player.decrementHealth(
                                 currentAttack.getHealthCost())
-                            # To track changes in health
-                            print(player.getHealth())
-                            return True
+                            retVal = True
                 # The attack has been carried out
                 self.toggleAttack()
+            print(player.getHealth())
+        return retVal
 
     def setCurrentAttackIndex(self, index: int) -> None:
         self.__currentAttackIndex = index
