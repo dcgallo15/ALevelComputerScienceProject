@@ -394,7 +394,7 @@ class Enemy(Player):
         # Timer starts at 0
         self.__recentHitTimer = 0
 
-    # Will control wether the enemy attempts to find the player or not
+    # Will control whether the enemy attempts to find the player or not
     def __setFind(self, playerHealth: int, playerBlockTimer: float, playerBlockTime: float):
         # If the enemy is on very low health but players health is much higher set find to false
         if self.getHealth() < 20 and playerHealth > 40:
@@ -415,7 +415,6 @@ class Enemy(Player):
             self.__find = True
 
     # This will set the current attack index
-    # TODO: Code the attack selection algorithm
     # Will return an int from 0 -> 4
     def __selectAttack(self, player: Player) -> int:
         # 0 is basic attack
@@ -427,8 +426,16 @@ class Enemy(Player):
         if rand == 0:  # Short or long range attack
             # Check the range of the player
             # If player out of range of short range attack
+            if self.getFacingRight() == True:
+                if self.getXPos() + self.getWidth() in range(player.getXPos() - self.getAttacks()[4].getRange(), player.getXPos()):
+                    self.setCurrentAttackIndex(4)
+                    return
+            else:
+                if self.getXPos() in range(player.getXPos(), player.getXPos() - self.getAttacks()[4].getRange()):
+                    self.setCurrentAttackIndex(4)
+                    return
             # Select long range attack
-            pass
+            self.setCurrentAttackIndex(3)
         else:  # Select Top, Middle or Bottom attack
             rand = randint(0, 1)
             if player.getBlock() == BlockState().TOP:

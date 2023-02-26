@@ -259,7 +259,7 @@ def main() -> int:
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
         enemy.moveTowardsPlayer(player)
-        #enemy.attackPlayer(player, deltaTime)
+        enemy.attackPlayer(player, deltaTime)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
