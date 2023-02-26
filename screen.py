@@ -21,6 +21,10 @@ class Screen():
     def getWidth(self) -> int:
         return self.__w
 
+    # So that UI elements can be rendered seperatly
+    def getPygameScreen(self):
+        return self.__screen
+
     def attachObject(self, newObject: Object) -> None:
         self.__objects.append(newObject)
 

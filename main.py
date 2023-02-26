@@ -4,6 +4,7 @@ from object import Object, Player, Enemy
 from animation import AnimationState, AnimationManager
 from attack import Attack, BlockState
 from vector import Vector
+from UI import horizontalBar
 from math import pi
 
 from level import testLevel, level1
@@ -96,6 +97,8 @@ def main() -> int:
     screen.attachObject(enemy)
     screen.parseLevel(level1)
     clock = pygame.time.Clock()
+
+    playerHealthBar = horizontalBar(100, 20, 30, 0, (255, 0, 0))
 
     # This will loop will run throughout the playing of the level
     while gameRunning == True:
@@ -256,7 +259,7 @@ def main() -> int:
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
         enemy.moveTowardsPlayer(player)
-        enemy.attackPlayer(player, deltaTime)
+        #enemy.attackPlayer(player, deltaTime)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
@@ -273,6 +276,9 @@ def main() -> int:
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()
         enemy.resetVelocities()
+        # Render UI elements
+        playerHealthBar.setPercent(player.getHealth())
+        playerHealthBar.render(screen.getPygameScreen())
         # Renders the attached objects
         screen.render()
         # Clears the screen
