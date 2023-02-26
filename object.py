@@ -415,23 +415,56 @@ class Enemy(Player):
 
     # This will set the current attack index
     # TODO: Code the attack selection algorithm
-    def __selectAttack() -> int:  # Will return an int from 0 -> 4
+    # Will return an int from 0 -> 4
+    def __selectAttack(self, player: Player) -> int:
         # 0 is basic attack
         # 1 is top attack
         # 2 is bottom attack
         # 3 is long range attack
         # 4 is short range attack
+        rand = randint(0, 1)
+        if rand == 0:  # Short or long range attack
+            # Check the range of the player
+            # If player out of range of short range attack
+            # Select long range attack
+            pass
+        else:  # Select Top, Middle or Bottom attack
+            rand = randint(0, 1)
+            if player.getBlock() == BlockState().TOP:
+                # Choose either middle or bottom
+                if rand == 0:
+                    self.setCurrentAttackIndex(0)
+                    return
+                else:
+                    self.setCurrentAttackIndex(2)
+                    return
+            elif player.getBlock() == BlockState().MIDDLE:
+                # Choose either top or bottom
+                if rand == 0:
+                    self.setCurrentAttackIndex(1)
+                    return
+                else:
+                    self.setCurrentAttackIndex(2)
+                    return
+            elif player.getBlock() == BlockState().BOTTOM:
+                # Choose either top or middle
+                if rand == 0:
+                    self.setCurrentAttackIndex(0)
+                    return
+                else:
+                    self.setCurrentAttackIndex(1)
+                    return
+            else:  # If player hasn't blocked yet
+                self.setCurrentAttackIndex(0)  # Chose Middle
+                return
 
-        pass
-
-    def attackPlayer(self, player: Player, deltatime: float, playerPrevAttack: Attack):
+    def attackPlayer(self, player: Player, deltatime: float):
         if self.__incrementingRecentHitTimer == True:
             self.__recentHitTimer += deltatime
         self.__attackTimer += deltatime
         # Selects the attack:
-        #currentAttack: Attack = self.getAttacks()[self.__selectAttack]
-        self.setCurrentAttackIndex(0)
-        currentAttack: Attack = self.getAttacks()[self.getCurrentAttackIndex()]
+        self.__selectAttack(player)
+        currentAttack: Attack = self.getCurrentAttack()
 
         self.__setFind(player.getHealth(), player.getBlockTimer(),
                        player.getBlockTimeLimit())
@@ -449,9 +482,11 @@ class Enemy(Player):
 
                 # Find is false so no attack but is within range of player so must block
                 if self.__find == False:
-                    if playerPrevAttack.getAttackPoint() != BlockState().NONE:  # Should always be True
+                    # Should always be True
+                    if player.getCurrentAttack().getAttackPoint() != BlockState().NONE:
                         # Will always execute for current attacks
-                        self.setBlock(playerPrevAttack.getAttackPoint())
+                        self.setBlock(
+                            player.getCurrentAttack().getAttackPoint())
                     return  # No attack if find is false so return
 
                 if self.__attackTimer > 5:  # To ensure attacks dont occur too frequently

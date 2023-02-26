@@ -256,8 +256,7 @@ def main() -> int:
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 
         enemy.moveTowardsPlayer(player)
-        # TODO: instead of blockState.NONE this should be the player's previous attack
-        enemy.attackPlayer(player, deltaTime, blockState.NONE)
+        enemy.attackPlayer(player, deltaTime)
         player.resolveVelocities(deltaTime)
         enemy.resolveVelocities(deltaTime)
 
