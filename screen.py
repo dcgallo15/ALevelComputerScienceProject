@@ -31,6 +31,10 @@ class Screen():
     def removeObject(self, objToRemove: Object) -> None:
         self.__objects.remove(objToRemove)
 
+    # Clears the object list
+    def resetObjects(self) -> None:
+        self.__object = []
+
     # This will render all of the objects attached
     def render(self) -> None:
         for i in range(len(self.__objects)):

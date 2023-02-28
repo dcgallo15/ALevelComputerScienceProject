@@ -103,6 +103,7 @@ def main() -> int:
     playerBlockBar = horizontalBar(100, 20, 30, 20, (0, 0, 255), 100)
     enemyBlockBar = horizontalBar(100, 20, 300, 20, (0, 0, 255))
 
+    currentLevel: list = level1  # This will be changed throughout the start menu
     # Start screen logic
     startScreenRunning: bool = True
     startButton = pygameButton(100, 80, 100, 300, (0, 255, 0))
@@ -122,12 +123,14 @@ def main() -> int:
                     mousePos = pygame.mouse.get_pos()
                     # If start button is clicked
                     if startButton.isClicked(mousePos[0], mousePos[1]) == True:
+                        # Removes menu objects so they are not rendered on the game screen
                         screen.removeObject(startButton)
                         screen.removeObject(quitButton)
                         startScreenRunning = False
 
                     # If quit button is clicked
                     if quitButton.isClicked(mousePos[0], mousePos[1]) == True:
+                        # Game isn't run and the start screen also isnt run
                         startScreenRunning = False
                         gameRunning = False
         screen.render()
@@ -135,7 +138,7 @@ def main() -> int:
     # Attaches game screen objects
     screen.attachObject(player)
     screen.attachObject(enemy)
-    screen.parseLevel(level1)
+    screen.parseLevel(currentLevel)
 
     # This will loop will run throughout the playing of the level
     while gameRunning == True:
@@ -320,7 +323,6 @@ def main() -> int:
                                   int(player.getBlockTimer() * player.getBlockTimeLimit()))
         enemyBlockBar.setPercent(100 -
                                  int(enemy.getBlockTimer() * enemy.getBlockTimeLimit()))
-        enemyBlockBar.setPercent(100)
         playerHealthBar.render(screen.getPygameScreen())
         enemyHealthBar.render(screen.getPygameScreen())
         playerBlockBar.render(screen.getPygameScreen())
@@ -329,6 +331,10 @@ def main() -> int:
         # Clears the screen
         screen.clear()
         clock.tick(60)
+
+    # Game over or game won screen
+    # First 'screen.resetObjects()'
+    # Then add game won or game lost sprite
 
     return 0
 
