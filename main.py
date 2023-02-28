@@ -286,8 +286,13 @@ def main() -> int:
         playerHealthBar.setPercent(player.getHealth())
         enemyHealthBar.setPercent(enemy.getHealth())
         # FIXME:
-        playerBlockBar.setPercent(int(
-            100 * (player.getBlockTimeLimit() // (player.getBlockTimer() + 0.0001))))
+        # print(100 * (player.getBlockTimeLimit() /
+        #      (player.getBlockTimer() + 0.0001)))
+        print(player.getBlockTimer())
+        playerBlockBar.setPercent(100 -
+                                  int(player.getBlockTimer() * player.getBlockTimeLimit()))
+        enemyBlockBar.setPercent(100 -
+                                 int(enemy.getBlockTimer() * enemy.getBlockTimeLimit()))
         enemyBlockBar.setPercent(100)
         playerHealthBar.render(screen.getPygameScreen())
         enemyHealthBar.render(screen.getPygameScreen())
