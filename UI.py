@@ -24,3 +24,16 @@ class horizontalBar():
             obj = self.__objList[i]
             pygame.draw.rect(screen, obj.getColor(),
                              pygame.Rect(obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()))
+
+
+# will be rendered when attached to the screen since it inhertis from object
+class pygameButton(Object):
+    def __init__(self, width: int, height: int, xPos: int, yPos: int, color: tuple) -> None:
+        super().__init__(width, height, xPos, yPos, color)
+
+    # Returns true if mouse position within bounds of the button
+    # Retuns False if the mouse position out of bounds of the button
+    def isClicked(self, mouseX: int, mouseY: int) -> bool:
+        if mouseX in range(self.getXPos(), self.getXPos() + self.getWidth()) and mouseY in range(self.getYPos(), self.getYPos() + self.getHeight()):
+            return True
+        return False

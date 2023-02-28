@@ -28,6 +28,9 @@ class Screen():
     def attachObject(self, newObject: Object) -> None:
         self.__objects.append(newObject)
 
+    def removeObject(self, objToRemove: Object) -> None:
+        self.__objects.remove(objToRemove)
+
     # This will render all of the objects attached
     def render(self) -> None:
         for i in range(len(self.__objects)):
@@ -40,6 +43,11 @@ class Screen():
                 # creates a pygame rect object then draws it to the correct position on the screen
                 pygame.draw.rect(self.__screen, obj.getColor(), pygame.Rect(
                     obj.getXPos(), obj.getYPos(), obj.getWidth(), obj.getHeight()))
+        pygame.display.flip()
+        pygame.display.update()
+
+    def clear(self) -> None:
+        pygame.display.fill((0, 0, 0))
         pygame.display.flip()
         pygame.display.update()
 

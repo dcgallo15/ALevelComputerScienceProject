@@ -4,7 +4,7 @@ from object import Object, Player, Enemy
 from animation import AnimationState, AnimationManager
 from attack import Attack, BlockState
 from vector import Vector
-from UI import horizontalBar
+from UI import horizontalBar, pygameButton
 from math import pi
 
 from level import testLevel, level1
@@ -77,7 +77,6 @@ def main() -> int:
     for attack in playerAttacks:
         player.initAttacks(attack)
     # player must be first object attached to the screen
-    screen.attachObject(player)
 
     # TODO:
     # Finish adding the rest of the animations
@@ -96,8 +95,6 @@ def main() -> int:
     for attack in enemyAttacks:
         enemy.initAttacks(attack)
 
-    screen.attachObject(enemy)
-    screen.parseLevel(level1)
     clock = pygame.time.Clock()
 
     playerHealthBar = horizontalBar(100, 20, 30, 0, (255, 0, 0))
@@ -105,6 +102,40 @@ def main() -> int:
 
     playerBlockBar = horizontalBar(100, 20, 30, 20, (0, 0, 255), 100)
     enemyBlockBar = horizontalBar(100, 20, 300, 20, (0, 0, 255))
+
+    # Start screen logic
+    startScreenRunning: bool = True
+    startButton = pygameButton(100, 80, 100, 300, (0, 255, 0))
+    quitButton = pygameButton(50, 40, 100, 100, (255, 0, 0))
+    screen.attachObject(startButton)
+    screen.attachObject(quitButton)
+    while startScreenRunning == True:
+        # Event Handling:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                startScreenRunning = False
+                gameRunning = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # Left mouse button
+                if event.button == 1:
+                    mousePos = pygame.mouse.get_pos()
+                    # If start button is clicked
+                    if startButton.isClicked(mousePos[0], mousePos[1]) == True:
+                        screen.removeObject(startButton)
+                        screen.removeObject(quitButton)
+                        startScreenRunning = False
+
+                    # If quit button is clicked
+                    if quitButton.isClicked(mousePos[0], mousePos[1]) == True:
+                        startScreenRunning = False
+                        gameRunning = False
+        screen.render()
+
+    # Attaches game screen objects
+    screen.attachObject(player)
+    screen.attachObject(enemy)
+    screen.parseLevel(level1)
 
     # This will loop will run throughout the playing of the level
     while gameRunning == True:
@@ -285,10 +316,6 @@ def main() -> int:
         # Render UI elements
         playerHealthBar.setPercent(player.getHealth())
         enemyHealthBar.setPercent(enemy.getHealth())
-        # FIXME:
-        # print(100 * (player.getBlockTimeLimit() /
-        #      (player.getBlockTimer() + 0.0001)))
-        print(player.getBlockTimer())
         playerBlockBar.setPercent(100 -
                                   int(player.getBlockTimer() * player.getBlockTimeLimit()))
         enemyBlockBar.setPercent(100 -
@@ -298,7 +325,6 @@ def main() -> int:
         enemyHealthBar.render(screen.getPygameScreen())
         playerBlockBar.render(screen.getPygameScreen())
         enemyBlockBar.render(screen.getPygameScreen())
-        # Renders the attached objects
         screen.render()
         # Clears the screen
         screen.clear()
