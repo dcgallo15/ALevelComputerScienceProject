@@ -7,7 +7,7 @@ from vector import Vector
 from UI import horizontalBar, pygameButton
 from math import pi
 
-from level import testLevel, level1
+from level import testLevel, level1, level2, level3, level4, level5
 
 
 def main() -> int:
@@ -83,7 +83,7 @@ def main() -> int:
     # Add more attacks
 
     # Enemy Setup:
-    enemy = Enemy(400, 0, PL_IDLE0, [], 10)
+    enemy = Enemy(400, 300, PL_IDLE0, [], 10)
     enemy.initAnimStates(state.RUNNINGLEFT, [
         PL_RUNNINGLEFT0, PL_RUNNINGLEFT1])
     enemy.initAnimStates(state.RUNNINGRIGHT,
@@ -108,8 +108,15 @@ def main() -> int:
     startScreenRunning: bool = True
     startButton = pygameButton(100, 80, 100, 300, (0, 255, 0))
     quitButton = pygameButton(50, 40, 100, 100, (255, 0, 0))
+    levelButtons = [pygameButton(30, 30, 300, 50, (0, 255, 0)),
+                    pygameButton(30, 30, 300, 100, (0, 255, 0)),
+                    pygameButton(30, 30, 300, 150, (0, 255, 0)),
+                    pygameButton(30, 30, 300, 200, (0, 255, 0)),
+                    pygameButton(30, 30, 300, 250, (0, 255, 0))]
     screen.attachObject(startButton)
     screen.attachObject(quitButton)
+    for levelButton in levelButtons:
+        screen.attachObject(levelButton)
     while startScreenRunning == True:
         # Event Handling:
         for event in pygame.event.get():
@@ -126,6 +133,8 @@ def main() -> int:
                         # Removes menu objects so they are not rendered on the game screen
                         screen.removeObject(startButton)
                         screen.removeObject(quitButton)
+                        for levelButton in levelButtons:
+                            screen.removeObject(levelButton)
                         startScreenRunning = False
 
                     # If quit button is clicked
@@ -133,6 +142,21 @@ def main() -> int:
                         # Game isn't run and the start screen also isnt run
                         startScreenRunning = False
                         gameRunning = False
+
+                    for i in range(len(levelButtons)):
+                        if levelButtons[i].isClicked(mousePos[0], mousePos[1]) == True:
+                            if i == 0:
+                                currentLevel = level1
+                            elif i == 1:
+                                currentLevel = level2
+                            elif i == 2:
+                                currentLevel = level3
+                            elif i == 3:
+                                currentLevel = level4
+                            elif i == 4:
+                                currentLevel = level5
+                            print("Level:", i + 1)
+
         screen.render()
 
     # Attaches game screen objects
@@ -172,7 +196,7 @@ def main() -> int:
                     elif event.key == pygame.K_w:
                         # Fixes infinite jump
                         # this makes it so that jump cannot be held down
-                        if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == True:
+                        if player.isStoodOnGround(currentLevel, screen.getWidth(), screen.getHeight()) == True:
                             player.addVelocity(
                                 Vector(player.getSpeed() * player.getSpeed(), 3 * pi / 2))
                         keysDown.append("W")
@@ -266,7 +290,7 @@ def main() -> int:
 
         # Player Gravity
         # When the player is not stood on ground then there will be a gravity velcoity added
-        if player.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
+        if player.isStoodOnGround(currentLevel, screen.getWidth(), screen.getHeight()) == False:
             # When the player is stood on top of the enemy there will be no gravity added
             # This acts as a reaction force from the enemy and stops the player from falling through the enemy
             if player.collidesObjectY(enemy) == False:
@@ -294,7 +318,7 @@ def main() -> int:
         enemy.stopAtBounds(screen.getWidth(), screen.getHeight())
 
         # Enemy Gravity
-        if enemy.isStoodOnGround(level1, screen.getWidth(), screen.getHeight()) == False:
+        if enemy.isStoodOnGround(currentLevel, screen.getWidth(), screen.getHeight()) == False:
             # Gravity Velocity
             enemy.addVelocity(Vector(enemy.getSpeed(), pi / 2))
 

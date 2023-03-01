@@ -156,7 +156,6 @@ class Player(Object):
                             retVal = True
                 # The attack has been carried out
                 self.toggleAttack()
-            print(player.getHealth())
         return retVal
 
     def setCurrentAttackIndex(self, index: int) -> None:
@@ -511,8 +510,6 @@ class Enemy(Player):
             if self._getAnimManager().getCounter() == currentAttack.getTriggerIndex():
                 if player.getBlock() != currentAttack.getAttackPoint():  # Checks if attack is blocked
                     player.decrementHealth(currentAttack.getHealthCost())
-                # To keep track of player health
-                print("Player health: ", player.getHealth())
                 self.toggleAttack()  # Sets 'isAttacking' back to False
                 # Resets animation after attack is complete
                 # self.setAnimState(AnimationState().IDLE)
