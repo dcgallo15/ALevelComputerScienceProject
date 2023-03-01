@@ -113,8 +113,10 @@ def main() -> int:
                     pygameButton(30, 30, 300, 150, (0, 255, 0)),
                     pygameButton(30, 30, 300, 200, (0, 255, 0)),
                     pygameButton(30, 30, 300, 250, (0, 255, 0))]
+    keybindsButton = pygameButton(70, 70, 290, 300, (255, 0, 255))
     screen.attachObject(startButton)
     screen.attachObject(quitButton)
+    screen.attachObject(keybindsButton)
     for levelButton in levelButtons:
         screen.attachObject(levelButton)
     while startScreenRunning == True:
@@ -133,6 +135,7 @@ def main() -> int:
                         # Removes menu objects so they are not rendered on the game screen
                         screen.removeObject(startButton)
                         screen.removeObject(quitButton)
+                        screen.removeObject(keybindsButton)
                         for levelButton in levelButtons:
                             screen.removeObject(levelButton)
                         startScreenRunning = False
@@ -156,6 +159,21 @@ def main() -> int:
                             elif i == 4:
                                 currentLevel = level5
                             print("Level:", i + 1)
+
+                    if keybindsButton.isClicked(mousePos[0], mousePos[1]) == True:
+                        print("""
+                                Jump - W \n
+                                Left - A \n
+                                Right - D \n
+                                Basic Attack - Left mouse button \n
+                                Top Attack - W + Left mouse button \n
+                                Bottom Attack - S + Left mouse button \n
+                                Short Range Attack - Middle mouse button \n
+                                Long Range Attack - Right mouse button \n
+                                Top Block - C \n
+                                Middle Block - V \n
+                                Bottom Block - B \n
+                                """)
 
         screen.render()
 

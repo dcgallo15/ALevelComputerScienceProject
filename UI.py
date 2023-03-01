@@ -37,3 +37,8 @@ class pygameButton(Object):
         if mouseX in range(self.getXPos(), self.getXPos() + self.getWidth()) and mouseY in range(self.getYPos(), self.getYPos() + self.getHeight()):
             return True
         return False
+
+
+def tkinterMenu():
+    def __init__(self) -> None:
+        pass
