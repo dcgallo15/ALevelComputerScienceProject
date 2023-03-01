@@ -15,6 +15,7 @@ def main() -> int:
 
     # Main variables initialisation
     gameRunning: bool = True
+    playerWon: bool = False
     state = AnimationState()
     blockState = BlockState()
     keysDown = []  # keeps track of the keys that are pressed down
@@ -355,6 +356,16 @@ def main() -> int:
         player.incrementBlockTimer(deltaTime)
         enemy.incrementBlockTimer(deltaTime)
 
+        # Win Condition:
+        if enemy.getHealth() == 0:
+            playerWon = True
+            gameRunning = False  # Loop ends
+
+        # Lose Consition
+        if player.getHealth() == 0:
+            playerWon = False
+            gameRunning = False  # Loop ends
+
         # Resets the velocities so that they can be recalculated each frame
         player.resetVelocities()
         enemy.resetVelocities()
@@ -375,8 +386,19 @@ def main() -> int:
         clock.tick(60)
 
     # Game over or game won screen
-    # First 'screen.resetObjects()'
+    endScreenRunning: bool = True
+    if playerWon == True:
+        endScreen = pygame.image.load("img/gameWonScreen.png")
+    else:
+        endScreen = pygame.image.load("img/gameOverScreen.png")
     # Then add game won or game lost sprite
+    while endScreenRunning == True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                endScreenRunning = False
+        screen.clear()
+        screen.getPygameScreen().blit(endScreen, endScreen.get_rect())
+        screen.render()
 
     return 0
 
